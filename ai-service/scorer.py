@@ -50,3 +50,46 @@ def availability_score(requirement: StudentRequirement, tutor: Tutor) -> float:
         return 0.0
 
     return len(overlap) / len(student_days)
+
+def rating_score(tutor: Tutor) -> float:
+    """
+    Normalize rating จาก 0-5 ให้เป็น 0-1
+    """
+    return tutor.rating / 5.0
+
+def calculate_match_score(requirement: StudentRequirement, tutor: Tutor) -> float:
+    """
+    คำนวณ Match Score รวมจากทุก component ตามสูตร:
+    Score = 0.35×Subject + 0.20×Skill + 0.15×Rating + 0.15×Price + 0.15×Availability
+    """
+    # --- Subject Match ---
+    s_subject = subject_match_score(requirement, tutor)
+
+    # --- Skill Match ---
+    skill_order = {"beginner": 0, "intermediate": 1, "advanced": 2}
+    req_level = skill_order.get(requirement.skill_level, 0)
+    tutor_level = skill_order.get(tutor.skill_level, 0)
+
+    if tutor_level < req_level:
+        s_skill = 0.0  # tutor ระดับต่ำกว่า สอนไม่ได้
+    elif tutor_level == req_level:
+        s_skill = 1.0  # ตรงพอดี
+    else:
+        gap = tutor_level - req_level
+        s_skill = 1.0 / (2 ** gap)  # สูงกว่า 1 ระดับ → 0.5, 2 ระดับ → 0.25
+
+    # --- Rating, Price, Availability ---
+    s_rating = rating_score(tutor)
+    s_price = price_match_score(requirement, tutor)
+    s_avail = availability_score(requirement, tutor)
+
+    # --- รวมตามสูตร ---
+    score = (
+        0.35 * s_subject +
+        0.20 * s_skill   +
+        0.15 * s_rating  +
+        0.15 * s_price   +
+        0.15 * s_avail
+    )
+
+    return round(score, 4)
