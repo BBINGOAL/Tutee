@@ -93,3 +93,24 @@ def calculate_match_score(requirement: StudentRequirement, tutor: Tutor) -> floa
     )
 
     return round(score, 4)
+
+def rank_tutors(requirement: StudentRequirement, tutor_list: list[Tutor]) -> list[dict]:
+    """
+    คืน top 3 tutors พร้อมคะแนน เรียงจากมากไปน้อย
+    รูปแบบที่คืน: [{"rank": 1, "tutor": Tutor, "score": 0.85}, ...]
+    """
+    # คำนวณ score ทุกคน
+    scored = [
+        {"tutor": tutor, "score": calculate_match_score(requirement, tutor)}
+        for tutor in tutor_list
+    ]
+
+    # เรียงจากคะแนนมากไปน้อย
+    scored.sort(key=lambda x: x["score"], reverse=True)
+
+    # เพิ่ม rank และคืนแค่ top 3
+    top3 = scored[:3]
+    for i, item in enumerate(top3):
+        item["rank"] = i + 1
+
+    return top3
