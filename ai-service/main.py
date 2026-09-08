@@ -10,7 +10,6 @@ app = FastAPI(
 # รวม router เข้ากับ app หลัก
 app.include_router(recommend.router, prefix="/api/v1", tags=["Recommendation"])
 
-
 @app.get("/health")
 def health_check():
     """ตรวจสอบว่า server ทำงานอยู่"""
