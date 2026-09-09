@@ -18,3 +18,42 @@ def retrieve_context(question: str, top_k: int = 3) -> list[Tutor]:
 
     # แยกแค่ tutor object ออกมา (ทิ้ง similarity score)
     return [r["tutor"] for r in results]
+
+def build_rag_prompt(question: str, retrieved_tutors: list[Tutor]) -> dict:
+    """
+    สร้าง prompt สำหรับส่งให้ LLM
+    คืน dict แยก system กับ user เพราะ LLM API ส่วนใหญ่ต้องการแบบนี้
+    """
+    # สร้าง context จากข้อมูล tutor จริง
+    context_parts = []
+    for i, tutor in enumerate(retrieved_tutors, 1):
+        reviews_text = " | ".join(tutor.reviews)
+        context_parts.append(
+            f"ติวเตอร์คนที่ {i}: {tutor.name}\n"
+            f"  วิชาที่สอน: {', '.join(tutor.subjects)}\n"
+            f"  ราคา: {tutor.price_per_hour} บาท/ชั่วโมง\n"
+            f"  rating: {tutor.rating}/5.0\n"
+            f"  ประสบการณ์: {tutor.experience_years} ปี\n"
+            f"  แนะนำตัว: {tutor.bio}\n"
+            f"  วิธีสอน: {tutor.teaching_style}\n"
+            f"  รีวิว: {reviews_text}"
+        )
+
+    context = "\n\n".join(context_parts)
+
+    system_prompt = (
+        "คุณคือผู้ช่วยแนะนำติวเตอร์ของระบบ Tutee "
+        "ตอบคำถามจากข้อมูลติวเตอร์ที่ได้รับเท่านั้น "
+        "ถ้าข้อมูลไม่เพียงพอให้บอกตรงๆ ว่าไม่มีข้อมูลเพียงพอ "
+        "ตอบเป็นภาษาไทย กระชับ และเป็นประโยชน์"
+    )
+
+    user_message = (
+        f"ข้อมูลติวเตอร์ที่เกี่ยวข้อง:\n\n{context}\n\n"
+        f"คำถาม: {question}"
+    )
+
+    return {
+        "system": system_prompt,
+        "user": user_message
+    }
