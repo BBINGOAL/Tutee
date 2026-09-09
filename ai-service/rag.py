@@ -1,5 +1,13 @@
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
 from models import Tutor
 from vector_search import search_similar_tutors
+
+# โหลด .env file
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+
 
 
 def retrieve_context(question: str, top_k: int = 3) -> list[Tutor]:
