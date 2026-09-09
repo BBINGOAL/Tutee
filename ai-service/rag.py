@@ -87,7 +87,7 @@ def generate_answer(question: str) -> str:
         system_instruction=prompt_dict["system"],
         generation_config=genai.GenerationConfig(
             temperature=0.3,      # ตรงประเด็น ไม่แต่งเพิ่ม
-            max_output_tokens=512 # จำกัดความยาวคำตอบ
+            max_output_tokens=2048 # จำกัดความยาวคำตอบ
         )
     )
 
