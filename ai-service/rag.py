@@ -83,7 +83,7 @@ def generate_answer(question: str) -> str:
 
     # 3. เรียก Gemini
     model = genai.GenerativeModel(
-        model_name="gemini-2.0-flash",
+        model_name="gemini-3.6-flash",
         system_instruction=prompt_dict["system"],
         generation_config=genai.GenerationConfig(
             temperature=0.3,      # ตรงประเด็น ไม่แต่งเพิ่ม
