@@ -5,7 +5,6 @@ from sentence_transformers import SentenceTransformer
 MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
 _model = SentenceTransformer(MODEL_NAME)
 
-
 def embed_text(text: str) -> list[float]:
     """
     แปลงข้อความเป็น vector (embedding)
