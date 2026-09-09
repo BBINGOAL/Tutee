@@ -65,3 +65,32 @@ def build_rag_prompt(question: str, retrieved_tutors: list[Tutor]) -> dict:
         "system": system_prompt,
         "user": user_message
     }
+
+def generate_answer(question: str) -> str:
+    """
+    RAG pipeline ครบวงจร:
+    1. retrieve_context  → ดึง tutor ที่เกี่ยวข้อง
+    2. build_rag_prompt  → สร้าง prompt จากข้อมูลจริง
+    3. เรียก Gemini API  → ได้คำตอบ
+
+    temperature=0.3 เพราะต้องการคำตอบที่ตรงประเด็น ไม่สร้างสรรค์เกินไป
+    """
+    # 1. ดึง context
+    retrieved_tutors = retrieve_context(question, top_k=3)
+
+    # 2. สร้าง prompt
+    prompt_dict = build_rag_prompt(question, retrieved_tutors)
+
+    # 3. เรียก Gemini
+    model = genai.GenerativeModel(
+        model_name="gemini-2.5-flash",
+        system_instruction=prompt_dict["system"],
+        generation_config=genai.GenerationConfig(
+            temperature=0.3,      # ตรงประเด็น ไม่แต่งเพิ่ม
+            max_output_tokens=512 # จำกัดความยาวคำตอบ
+        )
+    )
+
+    response = model.generate_content(prompt_dict["user"])
+    return response.text
+
