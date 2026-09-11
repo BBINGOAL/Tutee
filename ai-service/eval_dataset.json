@@ -1,0 +1,262 @@
+[
+  {
+    "id": "tc001",
+    "category": "clear_match",
+    "description": "ต้องการ Python ระดับ advanced งบสูง → อ.สมชาย",
+    "requirement": {
+      "subject": "Python",
+      "skill_level": "advanced",
+      "budget_per_hour": 1000,
+      "available_days": ["Mon", "Wed"]
+    },
+    "expected_top1": "t001",
+    "expected_top3": ["t001", "t007", "t009"]
+  },
+  {
+    "id": "tc002",
+    "category": "clear_match",
+    "description": "ต้องการ English งบสูง → Mr. James",
+    "requirement": {
+      "subject": "English",
+      "skill_level": "beginner",
+      "budget_per_hour": 1500,
+      "available_days": ["Mon", "Tue"]
+    },
+    "expected_top1": "t003",
+    "expected_top3": ["t003"]
+  },
+  {
+    "id": "tc003",
+    "category": "clear_match",
+    "description": "ต้องการ Japanese มือใหม่ → ครูบอย",
+    "requirement": {
+      "subject": "Japanese",
+      "skill_level": "beginner",
+      "budget_per_hour": 500,
+      "available_days": ["Mon", "Sat"]
+    },
+    "expected_top1": "t008",
+    "expected_top3": ["t008"]
+  },
+  {
+    "id": "tc004",
+    "category": "clear_match",
+    "description": "ต้องการ React/JavaScript งบกลาง → พี่ต้น",
+    "requirement": {
+      "subject": "JavaScript",
+      "skill_level": "beginner",
+      "budget_per_hour": 700,
+      "available_days": ["Sat", "Sun"]
+    },
+    "expected_top1": "t004",
+    "expected_top3": ["t004"]
+  },
+  {
+    "id": "tc005",
+    "category": "clear_match",
+    "description": "ต้องการ Machine Learning ระดับ intermediate → อ.สุภา",
+    "requirement": {
+      "subject": "Machine Learning",
+      "skill_level": "intermediate",
+      "budget_per_hour": 1000,
+      "available_days": ["Sat", "Sun"]
+    },
+    "expected_top1": "t009",
+    "expected_top3": ["t009", "t001"]
+  },
+  {
+    "id": "tc006",
+    "category": "clear_match",
+    "description": "ต้องการ Physics advanced → ดร.วิชัย",
+    "requirement": {
+      "subject": "Physics",
+      "skill_level": "advanced",
+      "budget_per_hour": 1500,
+      "available_days": ["Tue", "Thu"]
+    },
+    "expected_top1": "t006",
+    "expected_top3": ["t006"]
+  },
+  {
+    "id": "tc007",
+    "category": "clear_match",
+    "description": "ต้องการ SQL/Data Analysis → พี่แนน",
+    "requirement": {
+      "subject": "SQL",
+      "skill_level": "beginner",
+      "budget_per_hour": 600,
+      "available_days": ["Mon", "Fri"]
+    },
+    "expected_top1": "t007",
+    "expected_top3": ["t007"]
+  },
+  {
+    "id": "tc008",
+    "category": "clear_match",
+    "description": "ต้องการ Chemistry ระดับ beginner → ครูนิดา",
+    "requirement": {
+      "subject": "Chemistry",
+      "skill_level": "beginner",
+      "budget_per_hour": 400,
+      "available_days": ["Mon", "Wed"]
+    },
+    "expected_top1": "t005",
+    "expected_top3": ["t005"]
+  },
+  {
+    "id": "tc009",
+    "category": "ambiguous",
+    "description": "Math beginner งบน้อย → ฝ้าย (300) vs มาลี (400) แข่งกัน",
+    "requirement": {
+      "subject": "Math",
+      "skill_level": "beginner",
+      "budget_per_hour": 350,
+      "available_days": ["Mon", "Wed"]
+    },
+    "expected_top1": "t010",
+    "expected_top3": ["t010", "t002"]
+  },
+  {
+    "id": "tc010",
+    "category": "ambiguous",
+    "description": "Math intermediate งบพอ → มาลี vs ฝ้าย แข่งกัน (skill ต่างกัน)",
+    "requirement": {
+      "subject": "Math",
+      "skill_level": "intermediate",
+      "budget_per_hour": 500,
+      "available_days": ["Tue", "Thu"]
+    },
+    "expected_top1": "t002",
+    "expected_top3": ["t002", "t006"]
+  },
+  {
+    "id": "tc011",
+    "category": "ambiguous",
+    "description": "Python beginner งบกลาง → อ.สมชาย vs พี่แนน แข่งกัน",
+    "requirement": {
+      "subject": "Python",
+      "skill_level": "beginner",
+      "budget_per_hour": 600,
+      "available_days": ["Mon", "Fri"]
+    },
+    "expected_top1": "t007",
+    "expected_top3": ["t007", "t001"]
+  },
+  {
+    "id": "tc012",
+    "category": "ambiguous",
+    "description": "Science beginner งบน้อย → ครูนิดา vs ฝ้าย",
+    "requirement": {
+      "subject": "Science",
+      "skill_level": "beginner",
+      "budget_per_hour": 400,
+      "available_days": ["Mon", "Wed", "Sat"]
+    },
+    "expected_top1": "t005",
+    "expected_top3": ["t005", "t010"]
+  },
+  {
+    "id": "tc013",
+    "category": "ambiguous",
+    "description": "Math beginner วันไม่ตรง → ฝ้ายดีกว่ามาลีเพราะวันตรง",
+    "requirement": {
+      "subject": "Math",
+      "skill_level": "beginner",
+      "budget_per_hour": 500,
+      "available_days": ["Mon", "Tue", "Wed"]
+    },
+    "expected_top1": "t010",
+    "expected_top3": ["t010", "t002"]
+  },
+  {
+    "id": "tc014",
+    "category": "ambiguous",
+    "description": "Calculus intermediate → มาลี (สอน Calculus) vs ดร.วิชัย (Engineering Math)",
+    "requirement": {
+      "subject": "Calculus",
+      "skill_level": "intermediate",
+      "budget_per_hour": 500,
+      "available_days": ["Tue", "Thu", "Sat"]
+    },
+    "expected_top1": "t002",
+    "expected_top3": ["t002", "t006"]
+  },
+  {
+    "id": "tc015",
+    "category": "ambiguous",
+    "description": "Deep Learning intermediate งบไม่สูงมาก → อ.สุภา",
+    "requirement": {
+      "subject": "Deep Learning",
+      "skill_level": "intermediate",
+      "budget_per_hour": 950,
+      "available_days": ["Sat"]
+    },
+    "expected_top1": "t009",
+    "expected_top3": ["t009"]
+  },
+  {
+    "id": "tc016",
+    "category": "edge_case",
+    "description": "Python แต่งบน้อยมาก (300) → ไม่มีใครอยู่ในงบ ต้องเอาที่ใกล้ที่สุด",
+    "requirement": {
+      "subject": "Python",
+      "skill_level": "beginner",
+      "budget_per_hour": 300,
+      "available_days": ["Mon"]
+    },
+    "expected_top1": "t007",
+    "expected_top3": ["t007", "t001", "t009"]
+  },
+  {
+    "id": "tc017",
+    "category": "edge_case",
+    "description": "English งบน้อย (500) → Mr. James แพงเกิน ไม่มีใครตรง",
+    "requirement": {
+      "subject": "English",
+      "skill_level": "beginner",
+      "budget_per_hour": 500,
+      "available_days": ["Mon"]
+    },
+    "expected_top1": "t003",
+    "expected_top3": ["t003"]
+  },
+  {
+    "id": "tc018",
+    "category": "edge_case",
+    "description": "Physics beginner งบน้อย → ดร.วิชัยแพงเกิน คะแนนรวมต่ำ",
+    "requirement": {
+      "subject": "Physics",
+      "skill_level": "beginner",
+      "budget_per_hour": 400,
+      "available_days": ["Tue"]
+    },
+    "expected_top1": "t006",
+    "expected_top3": ["t006"]
+  },
+  {
+    "id": "tc019",
+    "category": "edge_case",
+    "description": "Math วันไม่ตรงเลยสักคน → ระบบยังให้ผลได้ (avail_score=0)",
+    "requirement": {
+      "subject": "Math",
+      "skill_level": "beginner",
+      "budget_per_hour": 500,
+      "available_days": ["Sun"]
+    },
+    "expected_top1": "t010",
+    "expected_top3": ["t010", "t002"]
+  },
+  {
+    "id": "tc020",
+    "category": "edge_case",
+    "description": "วิชาไม่มีในระบบเลย (Music) → ไม่มีใคร subject_score=1",
+    "requirement": {
+      "subject": "Music",
+      "skill_level": "beginner",
+      "budget_per_hour": 500,
+      "available_days": ["Mon"]
+    },
+    "expected_top1": null,
+    "expected_top3": []
+  }
+]
