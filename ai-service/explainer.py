@@ -121,7 +121,7 @@ def explain_recommendation(
         ),
         generation_config=genai.GenerationConfig(
             temperature=0.1,       # ต่ำมาก เพราะต้องการ factual ไม่ creative
-            max_output_tokens=512  # คำอธิบายสั้น ไม่ต้องยาว
+            max_output_tokens=1024  # คำอธิบายสั้น ไม่ต้องยาว
         )
     )
 
