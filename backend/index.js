@@ -15,6 +15,9 @@ app.use(express.json());
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Tutee Node.js Gateway is running!' });
 });
+const recommendRoute = require('./src/routes/recommendRoute');
+app.use('/api/recommend', recommendRoute);
+
 
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
