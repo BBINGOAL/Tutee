@@ -1,0 +1,42 @@
+# กำหนดเวอร์ชั่นของ Compose file format
+version: '3.8'
+
+# services คือการบอกว่าเรามีระบบอะไรบ้าง
+services:
+  # 1. ระบบ AI Service (FastAPI)
+  ai-service:
+    build: 
+      context: ./ai-service      # บอกว่าให้ไปหา Dockerfile ในโฟลเดอร์ ai-service/
+    ports:
+      - "8000:8000"              # เชื่อม Port 8000 ของเครื่องเรา เข้ากับ Port 8000 ของ Container
+    environment:
+      # ตั้งค่าต่างๆ ที่นี่
+      - GEMINI_API_KEY=${GEMINI_API_KEY}  # ในการใช้งานจริง ต้องดึงค่านี้ไปใส่
+
+  # 2. ระบบ Backend (Node.js)
+  backend:
+    build:
+      context: ./backend         # บอกว่าให้ไปหา Dockerfile ในโฟลเดอร์ backend/
+    ports:
+      - "5000:5000"              # เชื่อม Port 5000 เครื่องเรา เข้ากับ 5000 ใน Container
+    environment:
+      # จุดสำคัญ! เราเปลี่ยน URL จาก 127.0.0.1 ไปใช้ชื่อ service "ai-service" แทน
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - ai-service               # สั่งให้รอ ai-service รันเสร็จก่อน ค่อยสตาร์ท backend
+
+  # 3. ฐานข้อมูล PostgreSQL พร้อม pgvector (เตรียมไว้สำหรับใช้จริง)
+  db:
+    image: ankane/pgvector:latest  # ดึง Image สำเร็จรูปมาจากเน็ต ไม่ต้องเขียน Dockerfile เอง
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=tutee
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # บันทึกข้อมูลลงเครื่องเรา เวลารีสตาร์ท ข้อมูลจะได้ไม่หาย
+
+# สร้างพื้นที่เก็บข้อมูลถาวร สำหรับ Database
+volumes:
+  postgres_data:
