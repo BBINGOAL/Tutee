@@ -1,22 +1,32 @@
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
+// SVG Icons — สีแดง line-style ตรงกับ Figma design
+const IconTarget = () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C0392B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="2"/>
+    </svg>
+);
+const IconChart = () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C0392B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+        <line x1="2" y1="20" x2="22" y2="20"/>
+    </svg>
+);
+const IconChat = () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C0392B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+);
+
 const FEATURES = [
-    {
-        icon: '🎯',
-        title: 'แมะตรงจิ้ง',
-        desc: 'ระบบวิเคราะห์ความต้องการของคุณและจับคู่ติวเตอร์ที่เหมาะสมที่สุดแบบอัตโนมัติ',
-    },
-    {
-        icon: '📊',
-        title: 'อธิบายเหตุผลได้',
-        desc: 'ไม่ใช่แค่บอกว่าเหมาะ แต่บอกด้วยว่าทำไม พร้อมคะแนนในแต่ละด้านที่ชัดเจน',
-    },
-    {
-        icon: '💬',
-        title: 'คาดไม่แมะแยก',
-        desc: 'ถามตอบกับ AI ของเราได้ตลอดเวลา เพื่อค้นหาติวเตอร์ที่ใช่ยิ่งขึ้น',
-    },
+    { Icon: IconTarget, title: 'เเนะนำตรงใจ', desc: 'วิเคราะห์ทักษะ จุดเเข็ง เเละเป้าหมายของคุณ จากนั้นจับคู่กับติวเตอร์ที่มีสไตล์การสอนที่ตรงกับความต้องการมากที่สุด' },
+    { Icon: IconChart, title: 'อธิบายเหตุผลได้', desc: 'ไม่ใช่แค่บอกว่าเหมาะ แต่บอกด้วยว่าทำไมติวเตอร์คนนี้ถึงเหมาะกับสไตล์การเรียนรู้ของคุณ' },
+    { Icon: IconChat, title: 'ถามได้เเบบเเชท', desc: 'ปรึกษา สอบถามหัวข้อเรียน หรือทดลองคุยเเนวทางการเรียนรู้ร่วมกันกับ AI' },
 ];
 
 const HOW_IT_WORKS = [
@@ -65,7 +75,9 @@ export default function Landing() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {FEATURES.map((f) => (
                             <div key={f.title} className="card p-6">
-                                <span className="text-3xl mb-4 block">{f.icon}</span>
+                                <div className="w-10 h-10 bg-brand-red-light rounded-lg flex items-center justify-center mb-4">
+                                    <f.Icon />
+                                </div>
                                 <h3 className="font-serif text-lg font-semibold text-text-main mb-2">{f.title}</h3>
                                 <p className="text-sm text-text-sub leading-relaxed">{f.desc}</p>
                             </div>
@@ -180,7 +192,7 @@ export default function Landing() {
                         ))}
                     </div>
                     <div className="border-t border-border-soft pt-6 text-xs text-text-muted">
-                        © 2025 Tutee Co., Ltd. สงวนสิทธิ์ทั้งหมด
+                        © 2026 Tutee Co., Ltd. สงวนสิทธิ์ทั้งหมด
                     </div>
                 </div>
             </footer>

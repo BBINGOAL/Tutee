@@ -9,11 +9,8 @@ export default function Navbar({ backLabel, backTo }) {
             <div className="max-w-content mx-auto px-6 h-16 flex items-center justify-between">
 
                 {/* Logo */}
-                <Link to="/" className="flex items-center gap-2">
+                <Link to="/" className="flex items-center">
                     <span className="font-serif text-xl font-bold text-brand-red">Tutee</span>
-                    <span className="text-[11px] font-medium bg-brand-red-light text-brand-red px-2 py-[2px] rounded-full tracking-wide">
-                        AI Powered
-                    </span>
                 </Link>
 
                 {/* Desktop: nav links | Other pages: back button */}
