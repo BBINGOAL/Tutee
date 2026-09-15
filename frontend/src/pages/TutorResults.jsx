@@ -55,7 +55,7 @@ function ScoreBar({ score }) {
     );
 }
 
-function TutorCard({ tutor }) {
+function TutorCard({ tutor, navigate }) {
     return (
         <div className="card p-5 md:p-6">
             {/* Layout: column on mobile, row on desktop */}
@@ -93,12 +93,12 @@ function TutorCard({ tutor }) {
                 {/* Right: Score + Button (แสดงใต้ info บน mobile) */}
                 <div className="flex lg:flex-col items-center lg:items-end justify-between lg:justify-start gap-4 lg:gap-3 shrink-0">
                     <ScoreBar score={tutor.total_score} />
-                    <Link
-                        to={`/tutor/${tutor.id}`}
+                    <button
+                        onClick={() => navigate(`/tutor/${tutor.id}`, { state: { tutor } })}
                         className="btn-outline text-sm whitespace-nowrap px-4 py-2"
                     >
                         ดูโปรไฟล์
-                    </Link>
+                    </button>
                 </div>
             </div>
         </div>
@@ -152,7 +152,7 @@ export default function TutorResults() {
                 {/* Tutor Cards — stacked vertically */}
                 <div className="flex flex-col gap-4">
                     {results.map((tutor) => (
-                        <TutorCard key={tutor.id} tutor={tutor} />
+                        <TutorCard key={tutor.id} tutor={tutor} navigate={navigate} />
                     ))}
                 </div>
 

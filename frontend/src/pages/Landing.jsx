@@ -41,7 +41,7 @@ export default function Landing() {
                 <div className="max-w-content mx-auto px-6">
                     <p className="section-eyebrow">AI-Powered Tutor Matching</p>
                     <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-text-main leading-tight mt-2 mb-6">
-                        หา tutor ที่ใช่<br />ด้วย AI
+                        หา Tutor ที่ใช่<br />ด้วย Tutee
                     </h1>
                     <p className="text-text-sub text-base md:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
                         แพลตฟอร์มค้นหาติวเตอร์ที่ใช้ระบบอัจฉริยะวิเคราะห์ความต้องการ
