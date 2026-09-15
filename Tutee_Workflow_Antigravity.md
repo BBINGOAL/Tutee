@@ -423,6 +423,234 @@ User Question → Embedding → Vector Search → Relevant Tutor Data → LLM �
 | 5 | 8-9 | RAG Eval + Backend |
 | 6 | 10 + polish | Docker + เตรียม present |
 
+## Future Work (ไม่ทำใน 10 Phase นี้)
+
+10 Phase ข้างบนคือ **AI core** ของระบบเท่านั้น (recommendation + RAG + evaluation)
+ยังไม่มี user account, authentication, หรือ admin panel — ทุกอย่างทดสอบผ่าน
+Swagger UI (`/docs`) หรือ curl/Postman โดยไม่ต้อง login
+
+ส่วนที่เก็บไว้ทำทีหลัง (หลังมี frontend และ AI core เสถียรแล้ว):
+
+| ส่วน | รายละเอียด |
+|---|---|
+| User authentication | นักเรียน/ติวเตอร์ สมัครสมาชิก, login, JWT/session |
+| User roles | Student vs Tutor vs Admin แยก permission |
+| Tutor management | ติวเตอร์ CRUD โปรไฟล์ตัวเอง แทน mock JSON ใน Phase 1 |
+| Booking system | จองคิว, ยืนยัน, ปฏิทิน, การชำระเงิน |
+| Admin panel | อนุมัติ tutor ใหม่, ดู analytics, จัดการ dispute |
+| Review system | นักเรียนให้ rating/review จริงหลังเรียนจบ |
+
+เหตุผลที่ตัดออก: เป้าหมายหลักของโปรเจกต์นี้คือฝึกสาย AI Engineer
+(Recommendation System + RAG + Evaluation) ถ้าใส่ auth/admin/booking
+เข้าไปด้วยตั้งแต่แรก effort ส่วนใหญ่จะไปอยู่ที่ CRUD/user management
+แทนที่จะเป็น AI ซึ่งเสี่ยงทำไม่ทันตาม timeline ที่วางไว้
+
+ตอนเขียน README ให้ใส่หัวข้อนี้ไว้เป็น "Future Improvements" เพื่อโชว์ว่า
+คุณเห็นภาพรวมทั้งระบบ ไม่ใช่แค่ทำเท่าที่ทำได้แล้วจบ
+
+---
+
+## Phase 11 — React Frontend (ไม่มี Auth)
+
+### เป้าหมาย
+ต่อ UI จริงเข้ากับ API ที่มีอยู่แล้ว (Phase 3 /recommend, Phase 5 /ask)
+ไม่มี login/register ในเฟสนี้ — ทุกคนเข้าใช้งานได้เลยเหมือน public tool
+
+ดีไซน์อ้างอิงจากไฟล์ Figma ที่ทำไว้แล้ว (5 หน้า) — ให้แนบ screenshot
+ทั้ง 5 ภาพให้ Antigravity ดูประกอบตอนเริ่ม Phase นี้ด้วย
+
+### Design Spec (จากไฟล์ Figma จริง)
+
+**สีหลัก**
+- พื้นหลัง: ครีมอุ่น `#FAF3EA` (โทน oatmeal)
+- Surface/การ์ด: ขาว `#FFFFFF` หรือครีมอ่อนกว่าพื้นหลัง
+- Accent หลัก: แดงอิฐ `#C0392B` — ใช้กับปุ่ม CTA, highlight, match score, tag badge
+- ข้อความหลัก: เกือบดำ `#1F1F1F`
+- ข้อความรอง: เทาเข้ม
+- เส้นขอบ: บาง 1px สีเทาอ่อน ไม่มี shadow
+
+**ฟอนต์**
+- หัวข้อใหญ่ (hero, ชื่อ tutor): serif มีคาแรกเตอร์ (เช่น Fraunces/Lora) ตัว "tutor" ใน headline ใช้ italic serif
+- เนื้อหา/UI: sans-serif เรียบง่าย
+
+**5 หน้าที่ต้องสร้าง**
+
+1. **Landing page** — header (โลโก้ Tutee + badge "AI Powered", nav, ปุ่ม "เริ่มใช้งาน"),
+   hero section พร้อม 2 ปุ่ม CTA, การ์ด 3 ใบอธิบายจุดเด่น (แนะนำตรงใจ/อธิบายเหตุผลได้/ถามได้แบบแชท),
+   section "3 ขั้นตอนง่ายๆ" แบบเลขข้อ 01-02-03, section tutor แนะนำ (การ์ดแนวนอน 3 ใบ),
+   CTA section ปิดท้ายพื้นเข้มกว่า, footer
+
+2. **Requirement Form** — การ์ดเดี่ยวกลางจอ ขอบมน มี field: วิชาที่อยากเรียน (text),
+   ระดับผู้เรียน (dropdown), งบประมาณต่อชั่วโมง (number + หน่วย "บาท/ชม."),
+   วันและเวลาที่สะดวกเรียน (dropdown) ปุ่ม submit สีแดงเต็มความกว้าง
+   ข้อความเล็กใต้การ์ดบอกเรื่อง privacy
+
+3. **Tutor Results** — หัวข้อ "ANALYSIS COMPLETE" ตัวเล็กสีแดง, การ์ด tutor เรียงแนวตั้ง
+   อันดับ 1 มีเส้นขอบแดงหนาเน้น, แต่ละการ์ดมี badge อันดับ, รูปโปรไฟล์วงกลม,
+   เปอร์เซ็นต์ match พร้อม underline สีแดงใต้ตัวเลข, แถว icon (วิชา/ราคา/rating/วันว่าง),
+   ส่วน "AI MATCH ANALYSIS" อธิบายเหตุผล, ปุ่ม "ดูโปรไฟล์" ขอบแดงพื้นโปร่ง,
+   การ์ด CTA ท้ายหน้าให้ปรับเงื่อนไขแล้ววิเคราะห์ใหม่
+
+4. **Tutee Chat** — header มี back arrow + ชื่อ "ถาม Tutee" + สถานะออนไลน์,
+   bubble ฝั่ง AI สีขาวชิดซ้าย, bubble ฝั่งผู้ใช้สีแดงชิดขวา,
+   AI ตอบพร้อมแนบการ์ด tutor เล็กๆ (รูป, ชื่อ, rating, tag วิชา, ราคา, ปุ่มดูโปรไฟล์)
+   input bar ล่างสุดพร้อมปุ่มส่งวงกลมสีแดง
+
+5. **Tutor Profile** — header + ปุ่มหัวใจ (favorite), รูปโปรไฟล์ใหญ่กลมมีขอบแดง,
+   ชื่อ + วุฒิการศึกษา, tag วิชาที่สอนแบบ pill ขอบแดง, แถบสรุป 3 ช่อง
+   (ราคา/rating/ประสบการณ์) คั่นเส้นแบ่ง, section "เกี่ยวกับสไตล์การสอน",
+   section รีวิวจากนักเรียน (การ์ดย่อย 3 ใบ), ปุ่ม CTA sticky ด้านล่าง "ติดต่อ tutor คนนี้"
+
+### Responsive requirement (สำคัญ — ใส่ไว้ในทุกหน้า)
+
+ทุกหน้าต้องรองรับ 3 breakpoint:
+- Mobile: < 640px (ดูตัวอย่างจาก mockup หน้า Chat และ Profile ที่ออกแบบเป็น mobile ไว้แล้ว)
+- Tablet: 640px - 1024px
+- Desktop: > 1024px (ดูตัวอย่างจาก mockup หน้า Landing, Form, Results ที่ออกแบบเป็น desktop ไว้แล้ว)
+
+กติกาการปรับ layout ตาม breakpoint:
+- Landing: การ์ด 3 ใบ (จุดเด่น/tutor แนะนำ) เรียงแนวนอนบน desktop → stack แนวตั้งบน mobile
+- Form: การ์ดกว้างเต็มจอ (มี padding) บน mobile แทนการ์ดลอยกลางจอแบบ desktop
+- Results: การ์ด tutor ปรับจาก row (รูป-ข้อมูล-score-ปุ่ม อยู่แถวเดียว) เป็น stack บน mobile
+- Chat และ Profile: ออกแบบมาเป็น mobile-first อยู่แล้ว ให้ขยายกว้างขึ้นแบบมี max-width
+  บน desktop แทนที่จะยืดเต็มจอกว้างเกินไป
+
+### Prompt สำหรับ Antigravity
+
+```
+ต่อจาก Phase 10 ตอนนี้ทำ Phase 11: React Frontend (ยังไม่มี auth)
+[แนบ screenshot ทั้ง 5 หน้าจาก Figma ที่ทำไว้]
+
+บริบท: มี Node.js backend (Phase 9) ที่ proxy ไปยัง FastAPI แล้ว
+(POST /api/recommend, POST /api/ask)
+
+Design spec: ดูจาก screenshot ที่แนบมา
+- สีพื้นหลังครีม #FAF3EA, accent แดง #C0392B, การ์ดขาว/ครีมอ่อน ไม่มี shadow
+  เส้นขอบบาง 1px, หัวข้อใหญ่ใช้ font serif (Fraunces หรือ Lora)
+- ต้องทำ responsive ทั้ง 3 breakpoint: mobile (<640px), tablet (640-1024px),
+  desktop (>1024px) ทุกหน้า
+
+งานที่ต้องการ (ทำทีละหน้า อธิบายก่อนเขียนโค้ดทุกครั้ง):
+
+1. อธิบายโครงสร้าง React project พื้นฐาน (components, pages, api client, 
+   global styles/theme สำหรับสีและฟอนต์ที่ใช้ซ้ำหลายหน้า)
+   ทำไมควรทำ theme constants แยกไฟล์ ไม่ hardcode สีในแต่ละ component
+
+2. สร้าง Landing page component ตาม design spec
+   - อธิบาย CSS Grid/Flexbox ที่ใช้ทำการ์ด 3 ใบ responsive
+   - อธิบาย media query หรือวิธี responsive ที่เลือกใช้ (CSS หรือ Tailwind breakpoint)
+
+3. สร้าง RequirementForm component
+   - ฟอร์มตาม design spec (4 field + ปุ่ม submit)
+   - อธิบาย controlled component และ useState
+   - responsive: การ์ดกลางจอบน desktop → เต็มความกว้างบน mobile
+
+4. สร้าง TutorResults component
+   - แสดง top-3 tutor พร้อม match score, underline, AI match analysis
+   - อธิบายการจัดการ loading/error state ตอนรอ API ตอบ
+   - responsive: row บน desktop → stack บน mobile
+
+5. เชื่อม RequirementForm เข้ากับ Node backend (POST /api/recommend)
+   อธิบายการจัดการ CORS ถ้าเจอปัญหา
+
+6. สร้าง TuteeChat component ตาม design spec (bubble, การ์ด tutor แนบในแชท)
+   เชื่อมกับ POST /api/ask, responsive: max-width บน desktop
+
+7. สร้าง TutorProfile component ตาม design spec (header, tag, สรุป 3 ช่อง, 
+   รีวิว, CTA sticky ด้านล่าง)
+
+8. ทำ routing ระหว่างหน้าทั้ง 5 หน้า (react-router หรือเทียบเท่า)
+   อธิบายการส่ง state ระหว่างหน้า (เช่น ผลจากฟอร์มส่งต่อไปหน้า results ยังไง)
+
+9. ทดสอบ responsive จริงในเบราว์เซอร์ (resize หรือ dev tools mobile view)
+   ทุกหน้าก่อนถือว่าจบ Phase
+
+ทำทีละข้อ หยุดรอฉันทดสอบก่อนไปข้อถัดไป
+```
+
+### เช็คก่อนจบ Phase นี้
+- กรอกฟอร์มจริงแล้วเห็นผล tutor ที่มาจาก backend จริง (ไม่ใช่ mock data ในหน้าเว็บ)
+- ถามคำถามในหน้า chat แล้วได้คำตอบจาก RAG จริง
+- ทดสอบ error case (เช่น backend ปิดอยู่) ว่า UI แสดง error ที่เข้าใจได้ ไม่ใช่หน้าขาว
+- ย่อ-ขยายหน้าต่างเบราว์เซอร์ทุกหน้า เช็คว่า layout ไม่พัง ทั้ง mobile/tablet/desktop
+- เทียบกับ screenshot ต้นฉบับว่าหน้าตาใกล้เคียงกันในทุกขนาดจอ
+
+---
+
+## Phase 12 — Auth + Admin พื้นฐาน (Optional — ทำถ้ามีเวลาเหลือเท่านั้น)
+
+⚠️ **อย่าเริ่ม Phase นี้ถ้าใกล้ deadline แล้ว** ให้ทำ Phase 11 ให้เสถียรก่อน
+ถ้าเวลาตึง ให้ข้าม Phase นี้ไปเลยและใช้ระบบแบบ Phase 11 (ไม่มี login) ไปโชว์แทน
+ยังคงเป็นชิ้นงานที่สมบูรณ์และน่าประทับใจอยู่
+
+### Scope ที่ตัดให้เบาที่สุดแล้ว
+- Register/login ธรรมดา (email + password, JWT)
+- 2 role เท่านั้น: student, admin (ไม่มี role tutor แยก)
+- Admin ทำได้แค่: ดู list ของ requirement ที่มีคนค้นหา + ดู list user
+- **ไม่มี** tutor self-service profile, ไม่มี booking, ไม่มี dashboard analytics
+
+### Prompt สำหรับ Antigravity
+
+```
+ต่อจาก Phase 11 ตอนนี้ทำ Phase 12: Auth + Admin พื้นฐาน (scope เล็กที่สุด)
+
+Scope ที่ต้องการเท่านั้น (ห้ามเกินนี้):
+- Register/login ด้วย email+password, ใช้ JWT
+- 2 role: student (default), admin
+- Admin page: ดู list user ทั้งหมด, ดู list requirement/search history
+- ไม่มี tutor profile management, ไม่มี booking, ไม่มี dashboard กราฟ
+
+งานที่ต้องการ (ทำทีละส่วน):
+
+1. อธิบาย JWT คืออะไร ทำงานยังไง (ต่างจาก session-based auth ยังไง)
+   ทำไมเหมาะกับ architecture ที่มี frontend/backend แยกกัน
+
+2. เขียน User model (Node.js/Express + PostgreSQL)
+   fields: id, email, password_hash, role, created_at
+   อธิบายทำไมต้อง hash password ด้วย bcrypt ไม่เก็บ plain text
+
+3. เขียน POST /api/auth/register และ POST /api/auth/login endpoints
+   อธิบาย flow การ validate + hash + generate token ทีละขั้น
+
+4. เขียน middleware ตรวจสอบ JWT สำหรับ protected routes
+   อธิบาย middleware pattern คืออะไร
+
+5. อธิบายว่า /api/recommend และ /api/ask ควร require login ไหม
+   (แนะนำ: ให้ใช้ได้แบบไม่ต้อง login เหมือนเดิม แต่ถ้า login แล้วเก็บ
+   search history ผูกกับ user_id ได้ - หรือจะข้ามส่วนนี้ไปเลยก็ได้ถ้าเวลาน้อย)
+
+6. หน้า Login/Register ใน React (form + เก็บ token ใน memory/localStorage)
+   อธิบายความเสี่ยงของการเก็บ JWT ใน localStorage แบบสั้นๆ
+
+7. สร้าง Admin page แสดง user list (ดึงจาก GET /api/admin/users
+   ที่ require role=admin เท่านั้น)
+
+ทำทีละข้อ หยุดรอทุกครั้ง ถ้าฉันบอกว่าเวลาไม่พอ ให้สรุปว่าทำถึงไหนแล้ว
+พอใช้โชว์ได้ในสภาพที่เป็นอยู่
+```
+
+### แผนสำรองถ้าเวลาไม่พอ
+ทำแค่ข้อ 1-4 (register/login backend ทำงานได้ ทดสอบผ่าน Postman)
+แล้วพูดใน README/สัมภาษณ์ว่า "ออกแบบ auth flow ไว้แล้ว backend ทำงานได้
+ส่วน UI login และ admin panel อยู่ระหว่างพัฒนา" — ยังคงน่าเชื่อถือกว่า
+การไม่มีอะไรเลย
+
+---
+
+## Timeline ปรับปรุง (รวม Phase 11-12)
+
+| ช่วง | Phase | หมายเหตุ |
+|---|---|---|
+| ตอนนี้ - จบ Phase 10 | 0-10 | AI core (ตามแผนเดิม) |
+| หลังจบ 10 | 11 | Frontend เปล่า (ไม่มี auth) — **ทำให้เสร็จก่อนเสมอ** |
+| ถ้ามีเวลาเหลือ | 12 | Auth + Admin พื้นฐาน — optional |
+
+กฎเหล็ก: **Phase 11 ต้องเสร็จสมบูรณ์ก่อน** ถึงจะพิจารณา Phase 12
+ถ้าใกล้ deadline ให้หยุดที่ Phase 11 แล้วโชว์ของที่สมบูรณ์ ดีกว่ามี Phase 12
+ที่ทำครึ่งๆ กลางๆ แล้วทั้งระบบดูไม่เสถียร
+
+---
+
 ## Tips การใช้ agent ให้ได้ผล
 
 - ถ้า agent เริ่มเขียนโค้ดยาวๆ ไม่หยุด ให้ตัดบทด้วย: *"หยุด อธิบายสิ่งที่เพิ่งเขียนให้ฟังก่อน"*
