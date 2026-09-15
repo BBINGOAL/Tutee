@@ -456,6 +456,10 @@ Swagger UI (`/docs`) หรือ curl/Postman โดยไม่ต้อง lo
 ต่อ UI จริงเข้ากับ API ที่มีอยู่แล้ว (Phase 3 /recommend, Phase 5 /ask)
 ไม่มี login/register ในเฟสนี้ — ทุกคนเข้าใช้งานได้เลยเหมือน public tool
 
+ใช้ **Tailwind CSS** เป็น styling framework หลัก (utility-first, responsive
+breakpoint ในตัว เช่น `sm: md: lg:` ทำให้ทำ responsive ได้ง่ายและสอดคล้องกับ
+ที่ต้องรองรับ 3 breakpoint อยู่แล้ว)
+
 ดีไซน์อ้างอิงจากไฟล์ Figma ที่ทำไว้แล้ว (5 หน้า) — ให้แนบ screenshot
 ทั้ง 5 ภาพให้ Antigravity ดูประกอบตอนเริ่ม Phase นี้ด้วย
 
@@ -503,17 +507,20 @@ Swagger UI (`/docs`) หรือ curl/Postman โดยไม่ต้อง lo
 
 ### Responsive requirement (สำคัญ — ใส่ไว้ในทุกหน้า)
 
-ทุกหน้าต้องรองรับ 3 breakpoint:
-- Mobile: < 640px (ดูตัวอย่างจาก mockup หน้า Chat และ Profile ที่ออกแบบเป็น mobile ไว้แล้ว)
-- Tablet: 640px - 1024px
-- Desktop: > 1024px (ดูตัวอย่างจาก mockup หน้า Landing, Form, Results ที่ออกแบบเป็น desktop ไว้แล้ว)
+ใช้ Tailwind breakpoint มาตรฐานตรงๆ ไม่ต้องเขียน custom media query เอง:
+- Mobile: default (ไม่ใส่ prefix) — ดูตัวอย่างจาก mockup หน้า Chat และ Profile
+  ที่ออกแบบเป็น mobile ไว้แล้ว
+- Tablet: `md:` (768px ขึ้นไป)
+- Desktop: `lg:` (1024px ขึ้นไป) — ดูตัวอย่างจาก mockup หน้า Landing, Form,
+  Results ที่ออกแบบเป็น desktop ไว้แล้ว
 
 กติกาการปรับ layout ตาม breakpoint:
-- Landing: การ์ด 3 ใบ (จุดเด่น/tutor แนะนำ) เรียงแนวนอนบน desktop → stack แนวตั้งบน mobile
+- Landing: การ์ด 3 ใบ (จุดเด่น/tutor แนะนำ) ใช้ `grid grid-cols-1 md:grid-cols-3`
 - Form: การ์ดกว้างเต็มจอ (มี padding) บน mobile แทนการ์ดลอยกลางจอแบบ desktop
-- Results: การ์ด tutor ปรับจาก row (รูป-ข้อมูล-score-ปุ่ม อยู่แถวเดียว) เป็น stack บน mobile
-- Chat และ Profile: ออกแบบมาเป็น mobile-first อยู่แล้ว ให้ขยายกว้างขึ้นแบบมี max-width
-  บน desktop แทนที่จะยืดเต็มจอกว้างเกินไป
+  เช่น `max-w-full md:max-w-lg mx-auto`
+- Results: การ์ด tutor ปรับจาก row เป็น stack ด้วย `flex flex-col lg:flex-row`
+- Chat และ Profile: ออกแบบมาเป็น mobile-first อยู่แล้ว ให้ขยายกว้างขึ้นแบบมี
+  `max-w-2xl mx-auto` บน desktop แทนที่จะยืดเต็มจอกว้างเกินไป
 
 ### Prompt สำหรับ Antigravity
 
@@ -524,46 +531,55 @@ Swagger UI (`/docs`) หรือ curl/Postman โดยไม่ต้อง lo
 บริบท: มี Node.js backend (Phase 9) ที่ proxy ไปยัง FastAPI แล้ว
 (POST /api/recommend, POST /api/ask)
 
+Tech: ใช้ Tailwind CSS เป็น styling framework หลัก
+
 Design spec: ดูจาก screenshot ที่แนบมา
 - สีพื้นหลังครีม #FAF3EA, accent แดง #C0392B, การ์ดขาว/ครีมอ่อน ไม่มี shadow
   เส้นขอบบาง 1px, หัวข้อใหญ่ใช้ font serif (Fraunces หรือ Lora)
-- ต้องทำ responsive ทั้ง 3 breakpoint: mobile (<640px), tablet (640-1024px),
-  desktop (>1024px) ทุกหน้า
+- ต้องทำ responsive ด้วย Tailwind breakpoint มาตรฐาน: default (mobile),
+  md: (tablet 768px+), lg: (desktop 1024px+) ทุกหน้า
 
 งานที่ต้องการ (ทำทีละหน้า อธิบายก่อนเขียนโค้ดทุกครั้ง):
 
-1. อธิบายโครงสร้าง React project พื้นฐาน (components, pages, api client, 
-   global styles/theme สำหรับสีและฟอนต์ที่ใช้ซ้ำหลายหน้า)
-   ทำไมควรทำ theme constants แยกไฟล์ ไม่ hardcode สีในแต่ละ component
+1. อธิบายวิธี setup React + Tailwind CSS ตั้งแต่ต้น
+   (install, tailwind.config, ไฟล์ CSS หลักที่ import directive)
+   อธิบาย utility-first คืออะไร ต่างจากการเขียน CSS แยกไฟล์แบบเดิมยังไง
+   ทำไมเหมาะกับการทำ responsive เร็วๆ
 
-2. สร้าง Landing page component ตาม design spec
-   - อธิบาย CSS Grid/Flexbox ที่ใช้ทำการ์ด 3 ใบ responsive
-   - อธิบาย media query หรือวิธี responsive ที่เลือกใช้ (CSS หรือ Tailwind breakpoint)
+2. อธิบายวิธีตั้ง custom theme ใน tailwind.config
+   (ใส่สีครีม #FAF3EA และแดง #C0392B เป็น custom color name เช่น
+   'cream' และ 'brand-red' จะได้เรียกใช้ซ้ำได้ทุกหน้าแบบ bg-cream, text-brand-red
+   แทนการพิมพ์ hex code ซ้ำๆ)
+   อธิบายวิธีเพิ่ม custom font family (serif) ใน config ด้วย
 
-3. สร้าง RequirementForm component
-   - ฟอร์มตาม design spec (4 field + ปุ่ม submit)
+3. สร้าง Landing page component ด้วย Tailwind classes ตาม design spec
+   - อธิบายการใช้ grid grid-cols-1 md:grid-cols-3 ทำการ์ด 3 ใบ responsive
+   - อธิบาย breakpoint prefix (md:, lg:) ทำงานยังไง
+
+4. สร้าง RequirementForm component
+   - ฟอร์มตาม design spec (4 field + ปุ่ม submit) ด้วย Tailwind
    - อธิบาย controlled component และ useState
-   - responsive: การ์ดกลางจอบน desktop → เต็มความกว้างบน mobile
+   - responsive: max-w-full md:max-w-lg mx-auto
 
-4. สร้าง TutorResults component
+5. สร้าง TutorResults component
    - แสดง top-3 tutor พร้อม match score, underline, AI match analysis
    - อธิบายการจัดการ loading/error state ตอนรอ API ตอบ
-   - responsive: row บน desktop → stack บน mobile
+   - responsive: flex flex-col lg:flex-row สำหรับการ์ดแต่ละใบ
 
-5. เชื่อม RequirementForm เข้ากับ Node backend (POST /api/recommend)
+6. เชื่อม RequirementForm เข้ากับ Node backend (POST /api/recommend)
    อธิบายการจัดการ CORS ถ้าเจอปัญหา
 
-6. สร้าง TuteeChat component ตาม design spec (bubble, การ์ด tutor แนบในแชท)
-   เชื่อมกับ POST /api/ask, responsive: max-width บน desktop
+7. สร้าง TuteeChat component ตาม design spec (bubble, การ์ด tutor แนบในแชท)
+   เชื่อมกับ POST /api/ask, responsive: max-w-2xl mx-auto บน desktop
 
-7. สร้าง TutorProfile component ตาม design spec (header, tag, สรุป 3 ช่อง, 
+8. สร้าง TutorProfile component ตาม design spec (header, tag, สรุป 3 ช่อง, 
    รีวิว, CTA sticky ด้านล่าง)
 
-8. ทำ routing ระหว่างหน้าทั้ง 5 หน้า (react-router หรือเทียบเท่า)
+9. ทำ routing ระหว่างหน้าทั้ง 5 หน้า (react-router หรือเทียบเท่า)
    อธิบายการส่ง state ระหว่างหน้า (เช่น ผลจากฟอร์มส่งต่อไปหน้า results ยังไง)
 
-9. ทดสอบ responsive จริงในเบราว์เซอร์ (resize หรือ dev tools mobile view)
-   ทุกหน้าก่อนถือว่าจบ Phase
+10. ทดสอบ responsive จริงในเบราว์เซอร์ (resize หรือ dev tools mobile view)
+    ทุกหน้าก่อนถือว่าจบ Phase
 
 ทำทีละข้อ หยุดรอฉันทดสอบก่อนไปข้อถัดไป
 ```
