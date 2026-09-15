@@ -18,6 +18,9 @@ app.get('/api/health', (req, res) => {
 const recommendRoute = require('./src/routes/recommendRoute');
 app.use('/api/recommend', recommendRoute);
 
+const askRoute = require('./src/routes/askRoute');
+app.use('/api/ask', askRoute);
+
 
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
