@@ -9,12 +9,12 @@ export default {
         extend: {
             // ===== Custom Colors =====
             colors: {
-                'cream':          '#E5D1C5',  // พื้นหลังหลัก (Warm Cream)
-                'cream-dark':     '#D4BFB2',  // section ทึบเข้มขึ้นหน่อย
-                'card':           '#FFFFFF',  // การ์ด (ขาวเพื่ออ่านง่าย)
-                'border-soft':    '#C9B0A5',  // เส้นขอบ warm tone
-                'brand-red':      '#8E1617',  // Primary accent (Dark Red)
-                'brand-red-dark': '#550808',  // Hover state (Very Dark Red)
+                'cream':          '#FAF3EA',  // พื้นหลััก (Original Cream)
+                'cream-dark':     '#F0E8DF',  // section ทึบ
+                'card':           '#FFFFFF',  // การ์ดขาว
+                'border-soft':    '#E8DDD0',  // เส้นขอบ
+                'brand-red':      '#8E1617',  // Primary accent (Deep Red)
+                'brand-red-dark': '#550808',  // Hover (Very Dark Red)
                 'brand-red-light':'#F5E0DC',  // Icon bg / badge tint
                 'brand-deep':     '#6B0B0C',  // Deep Burgundy (ตัวเลข/heading เข้ม)
                 'text-main':      '#2C1010',  // หัวข้อ (warm dark)
