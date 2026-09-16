@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { getRecommendations } from '../api/client';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const SKILL_LEVELS = [
     { value: '', label: 'เลือกช่วงชั้น / ระดับชั้นเรียน' },
@@ -22,6 +23,20 @@ const AVAILABLE_DAYS = [
 
 export default function RequirementForm() {
     const navigate = useNavigate();
+    const { t } = useLanguage();
+
+    const SKILL_LEVELS_UI = [
+        { value: '', label: t('level_default') },
+        { value: 'beginner', label: t('level_beginner') },
+        { value: 'intermediate', label: t('level_intermediate') },
+        { value: 'advanced', label: t('level_advanced') },
+    ];
+    const DAYS_UI = [
+        { value: 'Mon', labelKey: 'day_Mon' }, { value: 'Tue', labelKey: 'day_Tue' },
+        { value: 'Wed', labelKey: 'day_Wed' }, { value: 'Thu', labelKey: 'day_Thu' },
+        { value: 'Fri', labelKey: 'day_Fri' }, { value: 'Sat', labelKey: 'day_Sat' },
+        { value: 'Sun', labelKey: 'day_Sun' },
+    ];
 
     // ── Controlled State ──
     // React เก็บค่าทุก field ไว้ใน state เสมอ ไม่อ่านจาก DOM
@@ -46,10 +61,10 @@ export default function RequirementForm() {
         setError('');
 
         // Validate
-        if (!subject.trim()) return setError('กรุณาระบุวิชาที่ต้องการเรียน');
-        if (!skillLevel)      return setError('กรุณาเลือกระดับผู้เรียน');
-        if (!budget || Number(budget) <= 0) return setError('กรุณาระบุงบประมาณที่ถูกต้อง');
-        if (selectedDays.length === 0) return setError('กรุณาเลือกอย่างน้อย 1 วัน');
+        if (!subject.trim()) return setError(t('err_subject'));
+        if (!skillLevel)      return setError(t('err_level'));
+        if (!budget || Number(budget) <= 0) return setError(t('err_budget'));
+        if (selectedDays.length === 0) return setError(t('err_days'));
 
         setLoading(true);
         try {
@@ -67,7 +82,7 @@ export default function RequirementForm() {
             navigate('/results', { state: { results, requirement } });
 
         } catch (err) {
-            setError(err.response?.data?.error || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+            setError(err.response?.data?.error || t('err_generic'));
         } finally {
             setLoading(false);
         }
@@ -87,11 +102,10 @@ export default function RequirementForm() {
 
                     {/* Header */}
                     <h1 className="font-serif text-2xl md:text-3xl font-bold text-text-main mb-2">
-                        บอกความต้องการของคุณ
+                        {t('form_heading')}
                     </h1>
                     <p className="text-sm text-text-sub mb-8 leading-relaxed">
-                        ให้ AI ของเราช่วยวิเคราะห์และคัดสรรติวเตอร์ที่ตรงกับ
-                        สไตล์การเรียนและเป้าหมายของคุณมากที่สุด
+                        {t('form_sub')}
                     </p>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -99,13 +113,13 @@ export default function RequirementForm() {
                         {/* Field 1: วิชา */}
                         <div>
                             <label className="block text-sm font-medium text-text-main mb-1.5">
-                                วิชาที่อยากเรียน
+                                {t('label_subject')}
                             </label>
                             <input
                                 type="text"
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
-                                placeholder="เช่น ฟิสิกส์ ม.ปลาย, สนทนาภาษาอังกฤษ, เขียนโค้ด Python"
+                                placeholder={t('placeholder_subject')}
                                 className={inputCls}
                             />
                         </div>
@@ -113,14 +127,14 @@ export default function RequirementForm() {
                         {/* Field 2: ระดับผู้เรียน */}
                         <div>
                             <label className="block text-sm font-medium text-text-main mb-1.5">
-                                ระดับผู้เรียน
+                                {t('label_level')}
                             </label>
                             <select
                                 value={skillLevel}
                                 onChange={(e) => setSkillLevel(e.target.value)}
                                 className={`${inputCls} cursor-pointer`}
                             >
-                                {SKILL_LEVELS.map((opt) => (
+                                {SKILL_LEVELS_UI.map((opt) => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
@@ -129,19 +143,19 @@ export default function RequirementForm() {
                         {/* Field 3: งบประมาณ */}
                         <div>
                             <label className="block text-sm font-medium text-text-main mb-1.5">
-                                งบประมาณต่อชั่วโมง
+                                {t('label_budget')}
                             </label>
                             <div className="relative">
                                 <input
                                     type="number"
                                     value={budget}
                                     onChange={(e) => setBudget(e.target.value)}
-                                    placeholder="ระบุตัวเลข เช่น 350, 500"
+                                    placeholder={t('placeholder_budget')}
                                     min="0"
                                     className={`${inputCls} pr-16`}
                                 />
                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">
-                                    บาท/ชม.
+                                    {t('unit_budget')}
                                 </span>
                             </div>
                         </div>
@@ -149,10 +163,10 @@ export default function RequirementForm() {
                         {/* Field 4: วันที่ว่าง (toggle buttons) */}
                         <div>
                             <label className="block text-sm font-medium text-text-main mb-2">
-                                วันที่สะดวกเรียน
+                                {t('label_days')}
                             </label>
                             <div className="flex flex-wrap gap-2">
-                                {AVAILABLE_DAYS.map((day) => {
+                                {DAYS_UI.map((day) => {
                                     const isSelected = selectedDays.includes(day.value);
                                     return (
                                         <button
@@ -165,7 +179,7 @@ export default function RequirementForm() {
                                                     : 'bg-white text-text-sub border-border-soft hover:border-brand-red'
                                             }`}
                                         >
-                                            {day.label}
+                                            {t(day.labelKey)}
                                         </button>
                                     );
                                 })}
@@ -191,16 +205,16 @@ export default function RequirementForm() {
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                                     </svg>
-                                    กำลังวิเคราะห์...
+                                    {t('btn_analyzing')}
                                 </span>
-                            ) : 'ค้นหา tutor ที่ใช่'}
+                            ) : t('btn_submit')}
                         </button>
                     </form>
                 </div>
 
                 {/* Security note */}
                 <p className="text-center text-xs text-text-muted mt-4 flex items-center justify-center gap-1">
-                    🔒 ข้อมูลของคุณจะถูกนำเข้าสู่ระบบเพื่อค้นหาติวเตอร์ที่เหมาะสมอย่างเป็นส่วนตัว
+                    {t('privacy_note')}
                 </p>
             </main>
         </div>

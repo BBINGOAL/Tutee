@@ -653,17 +653,97 @@ Scope ที่ต้องการเท่านั้น (ห้ามเก
 
 ---
 
-## Timeline ปรับปรุง (รวม Phase 11-12)
+## Phase 13 — Tutor Role (Optional ขั้นสุดท้าย — ทำก็ต่อเมื่อ Phase 12 เสร็จสมบูรณ์แล้วเท่านั้น)
+
+⚠️ **ห้ามเริ่ม Phase นี้ถ้า Phase 12 ยังไม่เสร็จ หรือใกล้ deadline แล้ว**
+Phase นี้เปลี่ยนระบบจาก "ใช้ mock tutor data" เป็น "tutor จริงสมัคร/แก้ไข
+โปรไฟล์เอง" ซึ่งกระทบทั้ง recommendation engine (Phase 2), RAG (Phase 4-5)
+และ evaluation (Phase 7-8) ที่ทำมาทั้งหมด เพราะข้อมูลจะไม่ใช่ static JSON อีกต่อไป
+
+### เหตุผลที่แยกออกมาต่างหาก
+การเพิ่ม role "tutor" ไม่ใช่แค่เพิ่ม dropdown ในระบบ login แต่หมายถึง:
+- ต้องมีหน้าให้ tutor กรอก/แก้ไขโปรไฟล์ตัวเอง (subject, price, availability)
+- ข้อมูลที่ tutor แก้ต้องเก็บใน database จริง เลิกพึ่ง mock JSON จาก Phase 1
+- ทุกครั้งที่ tutor แก้โปรไฟล์ ต้อง re-generate embedding ใหม่ (เชื่อมกับ Phase 4)
+- Admin ต้องมีหน้า "อนุมัติ tutor ใหม่" ก่อนขึ้นแสดงในระบบจริง
+
+### Scope ที่แนะนำ (เบาที่สุดเท่าที่จะทำได้)
+- Tutor register/login (ใช้ auth system เดิมจาก Phase 12 เพิ่ม role "tutor")
+- หน้า tutor profile form: กรอก subject, price, availability, คำอธิบายตัวเอง
+- เมื่อ tutor บันทึกโปรไฟล์ → เขียนลง PostgreSQL จริง (แทน mock JSON)
+- Trigger re-embed ข้อความโปรไฟล์ใหม่ (เรียกฟังก์ชัน embed_text จาก Phase 4 ซ้ำ)
+- Admin เห็น list tutor ที่รอ approve → กดอนุมัติ/ปฏิเสธได้
+- **ไม่ทำ**: ระบบ verify ตัวตน, การจ่ายเงิน, booking calendar, notification
+
+### Prompt สำหรับ Antigravity
+
+```
+ต่อจาก Phase 12 ตอนนี้ทำ Phase 13: Tutor Role (scope เล็กที่สุด)
+
+บริบทสำคัญ: ระบบตอนนี้ยังใช้ mock tutor data (JSON) จาก Phase 1 อยู่
+Phase นี้จะเปลี่ยนให้ tutor คนจริงสมัครและกรอกโปรไฟล์เอง แล้วเก็บลง
+PostgreSQL แทน พร้อม re-generate embedding ใหม่ทุกครั้งที่แก้ไข
+
+Scope ที่ต้องการเท่านั้น (ห้ามเกินนี้):
+- เพิ่ม role "tutor" เข้าไปในระบบ auth เดิม (จาก Phase 12)
+- หน้าฟอร์มให้ tutor กรอก/แก้ไขโปรไฟล์: subject, price, availability,
+  คำอธิบายสไตล์การสอน
+- Backend endpoint บันทึกโปรไฟล์ tutor ลง PostgreSQL จริง
+- Trigger เรียก embed_text (จาก Phase 4) ใหม่ทุกครั้งที่ tutor บันทึกโปรไฟล์
+- Admin page: list tutor ที่ status = "pending approval" พร้อมปุ่ม approve/reject
+- Tutor ที่ยังไม่ approve จะไม่ถูกดึงมาแสดงใน /recommend หรือ /ask
+
+งานที่ต้องการ (ทำทีละส่วน):
+
+1. อธิบายว่าทำไมการเปลี่ยนจาก mock data เป็น dynamic data กระทบ
+   recommendation engine และ RAG pipeline ที่ทำมาก่อนหน้านี้ยังไงบ้าง
+   (เช่น ต้องมี status field กัน tutor ที่ยังไม่ approve หลุดเข้าไปในผลลัพธ์)
+
+2. ออกแบบ Tutor table ใน PostgreSQL ใหม่ (เพิ่ม field: user_id ผูกกับ
+   ตาราง users, status: pending/approved/rejected)
+   อธิบาย foreign key relationship ระหว่าง users กับ tutors
+
+3. เขียน POST /api/tutor/profile (สร้าง/แก้ไขโปรไฟล์ตัวเอง)
+   require role=tutor เท่านั้น (ใช้ middleware จาก Phase 12)
+
+4. เขียน trigger/logic ที่เรียก embed_text ใหม่ทุกครั้งหลังบันทึกโปรไฟล์
+   อธิบายว่าทำไมต้องทำ synchronous หรือ async ตรงนี้ ข้อดีข้อเสียของแต่ละแบบ
+
+5. อัปเดต query ใน /recommend และ /ask ให้ filter เฉพาะ tutor ที่
+   status = "approved" เท่านั้น
+
+6. เขียน GET /api/admin/tutors/pending และ POST /api/admin/tutors/:id/approve
+   (require role=admin)
+
+7. หน้า React: TutorProfileForm (สำหรับ tutor กรอกข้อมูล) และ
+   AdminTutorApproval (list + ปุ่ม approve/reject) ใช้ Tailwind ตาม
+   theme เดิมจาก Phase 11
+
+ทำทีละข้อ หยุดรอทุกครั้ง ถ้าฉันบอกว่าเวลาไม่พอ ให้สรุปว่าทำถึงไหนแล้ว
+พอใช้โชว์ได้ในสภาพที่เป็นอยู่
+```
+
+### แผนสำรองถ้าเวลาไม่พอ
+ทำแค่ backend (ข้อ 1-6) ให้ทำงานได้ ทดสอบผ่าน Postman/Swagger พอ
+ไม่ต้องทำ React form ให้จบ แล้วพูดใน README ว่า "ออกแบบ tutor onboarding
+pipeline ไว้แล้ว รวมถึงการเชื่อมกับ RAG re-embedding เพื่อให้ข้อมูล tutor
+ใหม่ค้นหาได้ทันที ส่วน UI ยังอยู่ระหว่างพัฒนา"
+
+---
+
+## Timeline ปรับปรุง (รวม Phase 11-13)
 
 | ช่วง | Phase | หมายเหตุ |
 |---|---|---|
 | ตอนนี้ - จบ Phase 10 | 0-10 | AI core (ตามแผนเดิม) |
 | หลังจบ 10 | 11 | Frontend เปล่า (ไม่มี auth) — **ทำให้เสร็จก่อนเสมอ** |
-| ถ้ามีเวลาเหลือ | 12 | Auth + Admin พื้นฐาน — optional |
+| ถ้ามีเวลาเหลือ | 12 | Auth + Admin พื้นฐาน (student+admin เท่านั้น) — optional |
+| ถ้ามีเวลาเหลือมากจริงๆ | 13 | Tutor role + onboarding — optional ขั้นสุดท้าย |
 
-กฎเหล็ก: **Phase 11 ต้องเสร็จสมบูรณ์ก่อน** ถึงจะพิจารณา Phase 12
-ถ้าใกล้ deadline ให้หยุดที่ Phase 11 แล้วโชว์ของที่สมบูรณ์ ดีกว่ามี Phase 12
-ที่ทำครึ่งๆ กลางๆ แล้วทั้งระบบดูไม่เสถียร
+กฎเหล็ก: **ทำตามลำดับ 11 → 12 → 13 ห้ามข้าม** แต่ละ Phase ต้องเสร็จ
+สมบูรณ์และเสถียรก่อนเริ่ม Phase ถัดไป ถ้าใกล้ deadline ให้หยุดที่ Phase
+ล่าสุดที่เสร็จสมบูรณ์ แล้วโชว์ของที่สมบูรณ์นั้น ดีกว่ามี Phase ที่ทำ
+ครึ่งๆ กลางๆ แล้วทั้งระบบดูไม่เสถียร
 
 ---
 

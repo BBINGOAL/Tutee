@@ -1,5 +1,5 @@
-/* ① Import Google Font (ต้องอยู่บนสุดก่อน Tailwind directive) */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+/* ① Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap');
 
 /* ② Tailwind Directives — 3 บรรทัดนี้คือหัวใจของ Tailwind */
 @tailwind base;       /* CSS reset พื้นฐาน */
@@ -14,6 +14,7 @@
     body {
         @apply bg-cream text-text-main font-sans;
         -webkit-font-smoothing: antialiased;
+        font-feature-settings: 'kern' 1;
     }
     h1, h2, h3 {
         @apply font-serif;

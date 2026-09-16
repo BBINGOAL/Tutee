@@ -1,4 +1,6 @@
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
+import { IconStar, IconCheck } from '../components/Icons';
 
 // Mock tutor data (จะเปลี่ยนเป็น API call จริงในอนาคต)
 const TUTOR_DATA = {
@@ -46,9 +48,7 @@ function StarRating({ rating }) {
     return (
         <div className="flex gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
-                <span key={star} className={`text-sm ${star <= Math.round(rating) ? 'text-yellow-400' : 'text-gray-200'}`}>
-                    ★
-                </span>
+                <IconStar key={star} size={14} filled={star <= Math.round(rating)} />
             ))}
         </div>
     );
@@ -58,6 +58,7 @@ export default function TutorProfile() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
 
     // ① ถ้ามาจากหน้า Results → ใช้ข้อมูลจาก API จริง (ส่งมาผ่าน router state)
     // ② ถ้าเข้า URL ตรงๆ → fallback ไปใช้ Mock Data ใน Component
@@ -82,7 +83,7 @@ export default function TutorProfile() {
                             <polyline points="15 18 9 12 15 6"/>
                         </svg>
                     </button>
-                    <p className="font-semibold text-sm text-text-main">โปรไฟล์ติวเตอร์</p>
+                    <p className="font-semibold text-sm text-text-main">{t('profile_title')}</p>
                     <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-cream-dark transition-colors group">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-sub group-hover:text-brand-red group-hover:stroke-brand-red transition-colors">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -119,9 +120,9 @@ export default function TutorProfile() {
                 {/* ── 3 Stats Boxes ── */}
                 <div className="grid grid-cols-3 gap-3 mb-8">
                     {[
-                        { label: 'ค่าเรียนเริ่มต้น', value: `${tutor.price_per_hour}`, unit: '/ ชม.' },
-                        { label: 'รีวิวเฉลี่ย', value: `⭐ ${tutor.rating}`, unit: `(${tutor.reviewCount}+)` },
-                        { label: 'ประสบการณ์', value: `${tutor.experience} ปี`, unit: 'เต็ม' },
+                        { label: t('stat_price_label'), value: `${tutor.price_per_hour}`, unit: t('stat_price_unit') },
+                        { label: t('stat_rating_label'), value: `⭐ ${tutor.rating}`, unit: `(${tutor.reviewCount}+)` },
+                        { label: t('stat_exp_label'), value: `${tutor.experience} ${t('stat_exp_unit')}`, unit: '' },
                     ].map((stat) => (
                         <div key={stat.label} className="card p-3 text-center">
                             <p className="text-[11px] text-text-sub mb-1">{stat.label}</p>
@@ -133,11 +134,11 @@ export default function TutorProfile() {
 
                 {/* ── About / Teaching Style ── */}
                 <section className="mb-8">
-                    <h2 className="font-serif text-lg font-bold text-text-main mb-3">เกี่ยวกับสไตล์การสอน</h2>
+                    <h2 className="font-serif text-lg font-bold text-text-main mb-3">{t('about_heading')}</h2>
                     <div className="card p-5">
                         <p className="text-sm text-text-sub leading-relaxed mb-4">{tutor.about}</p>
                         <div className="flex items-start gap-2 text-sm text-text-main">
-                            <span className="text-brand-red mt-0.5 shrink-0">✓</span>
+                            <IconCheck size={16} />
                             <p>{tutor.highlight}</p>
                         </div>
                     </div>
@@ -147,10 +148,10 @@ export default function TutorProfile() {
                 <section>
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="font-serif text-lg font-bold text-text-main">
-                            รีวิวจากนักเรียนจริง
+                            {t('reviews_heading')}
                         </h2>
                         <button className="text-sm text-brand-red hover:underline">
-                            ดูทั้งหมด ({tutor.reviewCount})
+                            {t('reviews_view_all')} ({tutor.reviewCount})
                         </button>
                     </div>
 
@@ -175,8 +176,8 @@ export default function TutorProfile() {
             <div className="fixed bottom-0 left-0 right-0 bg-cream border-t border-border-soft z-50">
                 <div className="max-w-2xl mx-auto px-4 py-3">
                     <button className="btn-primary w-full py-4 text-base">
-                        ติดต่อ tutor คนนี้ →
-                    </button>
+                    {t('btn_contact')}
+                </button>
                 </div>
             </div>
         </div>

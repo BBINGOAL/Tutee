@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { askTutee } from '../api/client';
+import { useLanguage } from '../contexts/LanguageContext';
+import { IconStar } from '../components/Icons';
 
 // แปลง Day code → ชื่อย่อ
 const DAY_MAP = { Mon:'จ', Tue:'อ', Wed:'พ', Thu:'พฤ', Fri:'ศ', Sat:'ส', Sun:'อา' };
@@ -16,7 +18,7 @@ function TutorCardInChat({ tutor }) {
                 <div>
                     <p className="font-semibold text-sm text-text-main">{tutor.name}</p>
                     <p className="text-xs text-text-sub flex items-center gap-1">
-                        ⭐ {tutor.rating}
+                        <IconStar size={12} filled /> {tutor.rating}
                         {tutor.review_count && <span>({tutor.review_count}+ รีวิว)</span>}
                     </p>
                 </div>
@@ -65,20 +67,20 @@ function ChatBubble({ message }) {
     );
 }
 
-const INITIAL_MESSAGES = [
-    {
-        role: 'ai',
-        text: 'สวัสดี! บอกวิชา ระดับชั้น และเป้าหมายที่อยากพัฒนาได้เลย 😊',
-        time: '',
-        sources: [],
-    },
-];
-
 export default function TuteeChat() {
-    const [messages, setMessages] = useState(INITIAL_MESSAGES);
-    const [input, setInput]       = useState('');
-    const [loading, setLoading]   = useState(false);
+    const { t } = useLanguage();
+    const [messages, setMessages] = useState([
+        { role: 'ai', text: '', time: '', sources: [] },  // set in effect
+    ]);
+    const [input, setInput] = useState('');
+    const [loading, setLoading] = useState(false);
     const bottomRef = useRef(null);
+
+    // Set initial message with translated text
+    useEffect(() => {
+        setMessages([{ role: 'ai', text: t('chat_initial'), time: '', sources: [] }]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Auto-scroll ไปที่ล่างสุดทุกครั้งที่มีข้อความใหม่
     useEffect(() => {
@@ -111,7 +113,7 @@ export default function TuteeChat() {
         } catch {
             setMessages((prev) => [
                 ...prev,
-                { role: 'ai', text: 'ขออภัยครับ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง', time: getTime(), sources: [] },
+                { role: 'ai', text: t('chat_error'), time: getTime(), sources: [] },
             ]);
         } finally {
             setLoading(false);
@@ -132,10 +134,10 @@ export default function TuteeChat() {
                 <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
                     <Link to="/" className="text-text-sub hover:text-text-main text-sm">←</Link>
                     <div className="text-center">
-                        <p className="font-semibold text-sm text-text-main">ถาม Tutee</p>
+                        <p className="font-semibold text-sm text-text-main">{t('chat_title')}</p>
                         <p className="text-[11px] text-online flex items-center justify-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-online inline-block" />
-                            ติวเตอร์ระบบพร้อมตอบ
+                            {t('chat_status')}
                         </p>
                     </div>
                     <Link to="/find" className="text-text-sub hover:text-text-main text-sm">ℹ️</Link>
@@ -178,7 +180,7 @@ export default function TuteeChat() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="พิมพ์คำถามของคุณ..."
+                        placeholder={t('chat_placeholder')}
                         disabled={loading}
                         className="flex-1 border border-border-soft rounded-full px-4 py-2.5 text-sm bg-white focus:outline-none focus:border-brand-red transition-colors placeholder:text-text-muted disabled:opacity-60"
                     />

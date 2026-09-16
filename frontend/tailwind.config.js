@@ -24,10 +24,10 @@ export default {
 
             // ===== Custom Fonts =====
             fontFamily: {
-                // ใช้ className="font-serif" → ได้ Fraunces
-                serif: ['Fraunces', 'Lora', 'Georgia', 'serif'],
-                // ใช้ className="font-sans" → ได้ Inter (default ทุก element)
-                sans:  ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                // font-serif → Fraunces (heading, numbers, Latin text)
+                serif: ['Fraunces', 'Georgia', 'serif'],
+                // font-sans → IBM Plex Sans Thai (body, Thai text ทุก element)
+                sans:  ['"IBM Plex Sans Thai"', 'system-ui', 'sans-serif'],
             },
 
             // ===== Max Width =====

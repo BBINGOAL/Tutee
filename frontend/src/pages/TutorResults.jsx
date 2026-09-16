@@ -1,5 +1,7 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useLanguage } from '../contexts/LanguageContext';
+import { IconBook, IconCoin, IconStar, IconCalendar, IconSearch, IconBox } from '../components/Icons';
 
 // Mock data สำหรับทดสอบ UI (จะลบออกเมื่อต่อ API จริง)
 const MOCK_RESULTS = [
@@ -41,13 +43,13 @@ const MOCK_RESULTS = [
 // แปลง Day code → ภาษาไทย
 const DAY_MAP = { Mon:'จ', Tue:'อ', Wed:'พ', Thu:'พฤ', Fri:'ศ', Sat:'ส', Sun:'อา' };
 
-function ScoreBar({ score }) {
+function ScoreBar({ score, matchLabel }) {
     const pct = Math.round(score * 100);
     return (
         <div className="text-right">
             <p className="font-serif text-2xl font-bold text-text-main">
                 {pct}%
-                <span className="font-sans text-sm font-normal text-text-sub ml-1">ตรงกับคุณ</span>
+                <span className="font-sans text-sm font-normal text-text-sub ml-1">{matchLabel}</span>
             </p>
             {/* Red underline accent */}
             <div className="h-0.5 bg-brand-red mt-1 ml-auto" style={{ width: `${pct}%`, maxWidth: '120px' }} />
@@ -56,6 +58,7 @@ function ScoreBar({ score }) {
 }
 
 function TutorCard({ tutor, navigate }) {
+    const { t } = useLanguage();
     return (
         <div className="card p-5 md:p-6">
             {/* Layout: column on mobile, row on desktop */}
@@ -67,7 +70,7 @@ function TutorCard({ tutor, navigate }) {
                         {tutor.name.charAt(0)}
                     </div>
                     <span className="absolute -bottom-1 -right-1 bg-brand-red text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                        อันดับ {tutor.rank}
+                        {t('rank_badge')} {tutor.rank}
                     </span>
                 </div>
 
@@ -76,28 +79,28 @@ function TutorCard({ tutor, navigate }) {
                     <h3 className="font-serif text-xl font-bold text-text-main mb-1">{tutor.name}</h3>
 
                     {/* Meta row */}
-                    <div className="flex flex-wrap gap-3 text-sm text-text-sub mb-3">
-                        <span>📚 {tutor.subjects.join(', ')}</span>
-                        <span>💰 {tutor.price_per_hour} บาท/ชม.</span>
-                        <span>⭐ {tutor.rating}</span>
-                        <span>📅 {tutor.availability.map(d => DAY_MAP[d] || d).join(' ')}</span>
+                    <div className="flex flex-wrap gap-3 text-sm text-text-sub mb-3 items-center">
+                        <span className="flex items-center gap-1.5"><IconBook size={14}/> {tutor.subjects.join(', ')}</span>
+                        <span className="flex items-center gap-1.5"><IconCoin size={14}/> {tutor.price_per_hour} {t('price_unit')}</span>
+                        <span className="flex items-center gap-1.5"><IconStar size={14} filled /> {tutor.rating}</span>
+                        <span className="flex items-center gap-1.5"><IconCalendar size={14}/> {tutor.availability.map(d => DAY_MAP[d] || d).join(' ')}</span>
                     </div>
 
                     {/* AI Match Analysis */}
                     <p className="text-brand-red text-xs font-semibold tracking-wider mb-1 border-b border-brand-red inline-block pb-0.5">
-                        AI MATCH ANALYSIS
+                        {t('ai_analysis')}
                     </p>
                     <p className="text-sm text-text-sub leading-relaxed mt-1">{tutor.explanation}</p>
                 </div>
 
                 {/* Right: Score + Button (แสดงใต้ info บน mobile) */}
                 <div className="flex lg:flex-col items-center lg:items-end justify-between lg:justify-start gap-4 lg:gap-3 shrink-0">
-                    <ScoreBar score={tutor.total_score} />
+                    <ScoreBar score={tutor.total_score} matchLabel={t('match_label')} />
                     <button
                         onClick={() => navigate(`/tutor/${tutor.id}`, { state: { tutor } })}
                         className="btn-outline text-sm whitespace-nowrap px-4 py-2"
                     >
-                        ดูโปรไฟล์
+                        {t('btn_view_profile')}
                     </button>
                 </div>
             </div>
@@ -108,6 +111,7 @@ function TutorCard({ tutor, navigate }) {
 export default function TutorResults() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useLanguage();
 
     // รับข้อมูลจาก RequirementForm ที่ส่งมาผ่าน navigate('/results', { state: {...} })
     const results     = location.state?.results     ?? MOCK_RESULTS;
@@ -119,11 +123,11 @@ export default function TutorResults() {
             <div className="min-h-screen bg-cream">
                 <Navbar />
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-6">
-                    <p className="text-4xl">🔍</p>
-                    <h2 className="font-serif text-2xl font-bold text-text-main">ยังไม่มีผลการวิเคราะห์</h2>
-                    <p className="text-text-sub text-sm">กรุณากรอกข้อมูลในแบบฟอร์มก่อน</p>
+                    <IconBox size={72}><IconSearch size={36} /></IconBox>
+                    <h2 className="font-serif text-2xl font-bold text-text-main">{t('empty_title')}</h2>
+                    <p className="text-text-sub text-sm">{t('empty_sub')}</p>
                     <button onClick={() => navigate('/find')} className="btn-primary mt-2">
-                        กลับไปกรอกข้อมูล
+                        {t('btn_back_form')}
                     </button>
                 </div>
             </div>
@@ -137,16 +141,11 @@ export default function TutorResults() {
             <main className="max-w-content mx-auto px-4 md:px-6 py-10">
                 {/* Header */}
                 <div className="mb-8">
-                    <p className="section-eyebrow flex items-center gap-1.5">
-                        ✨ ANALYSIS COMPLETE
-                    </p>
+                    <p className="section-eyebrow flex items-center gap-1.5">{t('results_eyebrow')}</p>
                     <h1 className="font-serif text-3xl md:text-4xl font-bold text-text-main mt-2 mb-2">
-                        Tutor ที่แนะนำสำหรับคุณ
+                        {t('results_heading')}
                     </h1>
-                    <p className="text-text-sub text-sm">
-                        AI วิเคราะห์สไตล์การเรียนรู้และงบประมาณของคุณแล้ว
-                        นี่คือติวเตอร์ 3 อันดับแรกที่มีคะแนนความเข้ากันได้สูงที่สุด
-                    </p>
+                    <p className="text-text-sub text-sm">{t('results_sub')}</p>
                 </div>
 
                 {/* Tutor Cards — stacked vertically */}
@@ -160,13 +159,13 @@ export default function TutorResults() {
                 <div className="mt-6 card p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <p className="text-sm text-text-sub flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-brand-red shrink-0" />
-                        ต้องการปรับเปลี่ยนวิชาเรียนหรือเวลาที่สะดวกเพื่อให้ AI วิเคราะห์ใหม่หรือไม่?
+                        {t('retry_text')}
                     </p>
                     <button
                         onClick={() => navigate('/find')}
                         className="btn-outline text-sm whitespace-nowrap px-4 py-2"
                     >
-                        เริ่มวิเคราะห์อีกครั้ง
+                        {t('btn_retry')}
                     </button>
                 </div>
             </main>
