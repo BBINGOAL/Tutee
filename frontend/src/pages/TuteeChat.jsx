@@ -129,18 +129,18 @@ export default function TuteeChat() {
 
     return (
         <div className="min-h-screen bg-cream flex flex-col">
-            {/* Header (เหมือน mobile app) */}
-            <header className="bg-cream border-b border-border-soft sticky top-0 z-50">
+            {/* ── Header ── */}
+            <header className="bg-brand-red border-b border-brand-red-dark sticky top-0 z-50">
                 <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-                    <Link to="/" className="text-text-sub hover:text-text-main text-sm">←</Link>
+                    <Link to="/" className="text-white/70 hover:text-white text-sm">←</Link>
                     <div className="text-center">
-                        <p className="font-semibold text-sm text-text-main">{t('chat_title')}</p>
-                        <p className="text-[11px] text-online flex items-center justify-center gap-1">
+                        <p className="font-semibold text-sm text-white">{t('chat_title')}</p>
+                        <p className="text-[11px] text-white/70 flex items-center justify-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-online inline-block" />
                             {t('chat_status')}
                         </p>
                     </div>
-                    <Link to="/find" className="text-text-sub hover:text-text-main text-sm">ℹ️</Link>
+                    <Link to="/find" className="text-white/70 hover:text-white text-sm">&#9432;</Link>
                 </div>
             </header>
 

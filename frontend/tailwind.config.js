@@ -9,25 +9,27 @@ export default {
         extend: {
             // ===== Custom Colors =====
             colors: {
-                'cream':          '#FAF3EA',  // พื้นหลังหลัก → bg-cream
-                'cream-dark':     '#F0E8DF',  // พื้นหลัง section ทึบ
-                'card':           '#FFFFFF',  // การ์ด → bg-card
-                'border-soft':    '#E8DDD0',  // เส้นขอบ → border-border-soft
-                'brand-red':      '#C0392B',  // accent → bg-brand-red, text-brand-red
-                'brand-red-dark': '#A93226',  // hover → hover:bg-brand-red-dark
-                'brand-red-light':'#FAE5E3',  // badge bg → bg-brand-red-light
-                'text-main':      '#1C1C1C',  // หัวข้อ → text-text-main
-                'text-sub':       '#6B6B6B',  // คำอธิบาย → text-text-sub
-                'text-muted':     '#9E9E9E',  // placeholder → text-text-muted
+                'cream':          '#E5D1C5',  // พื้นหลังหลัก (Warm Cream)
+                'cream-dark':     '#D4BFB2',  // section ทึบเข้มขึ้นหน่อย
+                'card':           '#FFFFFF',  // การ์ด (ขาวเพื่ออ่านง่าย)
+                'border-soft':    '#C9B0A5',  // เส้นขอบ warm tone
+                'brand-red':      '#8E1617',  // Primary accent (Dark Red)
+                'brand-red-dark': '#550808',  // Hover state (Very Dark Red)
+                'brand-red-light':'#F5E0DC',  // Icon bg / badge tint
+                'brand-deep':     '#6B0B0C',  // Deep Burgundy (ตัวเลข/heading เข้ม)
+                'text-main':      '#2C1010',  // หัวข้อ (warm dark)
+                'text-sub':       '#6B4A4A',  // คำอธิบาย (warm gray)
+                'text-muted':     '#9E8080',  // placeholder (warm muted)
                 'online':         '#2ECC71',  // สีจุดเขียว
             },
 
             // ===== Custom Fonts =====
             fontFamily: {
-                // font-serif → Fraunces (heading, numbers, Latin text)
-                serif: ['Fraunces', 'Georgia', 'serif'],
-                // font-sans → IBM Plex Sans Thai (body, Thai text ทุก element)
-                sans:  ['"IBM Plex Sans Thai"', 'system-ui', 'sans-serif'],
+                // font-serif → Ubuntu Bold (heading, ตัวเลข, ชื่อ)
+                // Ubuntu ไม่มี Thai → browser fallback ไป Kanit โดยอัตโนมัติ
+                serif: ['Ubuntu', 'Kanit', 'sans-serif'],
+                // font-sans → Ubuntu + Kanit (body text ทั้ง EN และ TH)
+                sans:  ['Ubuntu', 'Kanit', 'sans-serif'],
             },
 
             // ===== Max Width =====

@@ -4,7 +4,7 @@
 // Usage: <IconStar size={16} /> or wrap in <IconBox><IconStar/></IconBox>
 // ──────────────────────────────────────────────────────────────
 
-const RED = '#C0392B';
+const RED = '#8E1617';
 
 // ── Wrapper: icon + red bg box ──
 export function IconBox({ children, size = 40 }) {

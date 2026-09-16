@@ -42,7 +42,7 @@ const en = {
     // ── Landing: CTA Banner ──
     cta_heading:     'Let Our AI\nFind the Right Answer and\nTutor for You Today',
     cta_sub:         'No upfront fees. Start for free and get accurate recommendations instantly.',
-    cta_btn:         'Get Started in 1 Click',
+    cta_btn:         'Get Started Click',
 
     // ── Landing: Footer ──
     footer_for_students:    'For Students',

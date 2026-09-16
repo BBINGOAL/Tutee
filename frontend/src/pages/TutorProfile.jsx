@@ -73,19 +73,19 @@ export default function TutorProfile() {
         <div className="min-h-screen bg-cream pb-24">
 
             {/* ── Header ── */}
-            <header className="bg-cream border-b border-border-soft sticky top-0 z-50">
+            <header className="bg-brand-red border-b border-brand-red-dark sticky top-0 z-50">
                 <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
                     <button
                         onClick={() => navigate(-1)}
-                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-cream-dark transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-brand-red-dark transition-colors"
                     >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-sub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="15 18 9 12 15 6"/>
                         </svg>
                     </button>
-                    <p className="font-semibold text-sm text-text-main">{t('profile_title')}</p>
-                    <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-cream-dark transition-colors group">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-sub group-hover:text-brand-red group-hover:stroke-brand-red transition-colors">
+                    <p className="font-semibold text-sm text-white">{t('profile_title')}</p>
+                    <button className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-brand-red-dark transition-colors group">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:fill-white/30 transition-colors">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                         </svg>
                     </button>
