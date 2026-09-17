@@ -9,18 +9,18 @@ export default {
         extend: {
             // ===== Custom Colors =====
             colors: {
-                'cream':          '#FAF3EA',  // พื้นหลััก (Original Cream)
-                'cream-dark':     '#F0E8DF',  // section ทึบ
+                'cream':          '#F2F0E4',  // พื้นหลัก (Off-white warm)
+                'cream-dark':     '#F2A2A2',  // พื้นหลัง section รอง (Blush Pink)
                 'card':           '#FFFFFF',  // การ์ดขาว
-                'border-soft':    '#E8DDD0',  // เส้นขอบ
-                'brand-red':      '#8E1617',  // Primary accent (Deep Red)
-                'brand-red-dark': '#550808',  // Hover (Very Dark Red)
-                'brand-red-light':'#F5E0DC',  // Icon bg / badge tint
-                'brand-deep':     '#6B0B0C',  // Deep Burgundy (ตัวเลข/heading เข้ม)
-                'text-main':      '#2C1010',  // หัวข้อ (warm dark)
-                'text-sub':       '#6B4A4A',  // คำอธิบาย (warm gray)
-                'text-muted':     '#9E8080',  // placeholder (warm muted)
-                'online':         '#2ECC71',  // สีจุดเขียว
+                'border-soft':    '#E5BCBC',  // เส้นขอบ (warm pink-tinted)
+                'brand-red':      '#8C1822',  // Primary accent
+                'brand-red-dark': '#730D0D',  // Hover state
+                'brand-red-light':'#FAE3E3',  // Icon bg / badge tint
+                'brand-deep':     '#400808',  // Deep Burgundy (shadow/text)
+                'text-main':      '#2A0A0A',  // หัวข้อ (warm near-black)
+                'text-sub':       '#6B3030',  // คำอธิบาย (warm mid)
+                'text-muted':     '#A07070',  // placeholder
+                'online':         '#2ECC71',  // สีออนไลน์
             },
 
             // ===== Custom Fonts =====

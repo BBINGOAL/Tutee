@@ -10,29 +10,31 @@ export default function Navbar({ backLabel, backTo }) {
         <nav className="bg-brand-red border-b border-brand-red-dark sticky top-0 z-50">
             <div className="max-w-content mx-auto px-6 h-16 flex items-center justify-between">
 
-                {/* Logo — white on dark red */}
+                {/* Logo — cream on dark red */}
                 <Link to="/" className="flex items-center">
-                    <span className="font-bold text-xl text-white tracking-wide">Tutee</span>
+                    <span className="font-bold text-xl tracking-wide" style={{ color: '#F2F0E4' }}>Tutee</span>
                 </Link>
 
                 {/* Nav Right */}
                 {isLanding ? (
                     <div className="flex items-center gap-6">
-                        <Link to="/find" className="hidden md:block text-sm text-white/70 hover:text-white transition-colors">{t('nav_find')}</Link>
-                        <Link to="/chat" className="hidden md:block text-sm text-white/70 hover:text-white transition-colors">{t('nav_how')}</Link>
-                        <a href="#" className="hidden md:block text-sm text-white/70 hover:text-white transition-colors">{t('nav_for_tutor')}</a>
+                        <Link to="/find" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_find')}</Link>
+                        <Link to="/chat" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_how')}</Link>
+                        <a href="#" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_for_tutor')}</a>
 
                         {/* Language Toggle — inverted for dark bg */}
                         <div className="flex items-center border border-white/30 rounded-full overflow-hidden text-xs font-medium">
                             <button
                                 onClick={() => switchLang('th')}
-                                className={`px-3 py-1.5 transition-colors ${lang === 'th' ? 'bg-white text-brand-red font-semibold' : 'text-white/70 hover:text-white'}`}
+                                className={`px-3 py-1.5 transition-colors ${lang === 'th' ? 'font-semibold' : 'opacity-60 hover:opacity-100'}`}
+                                style={{ color: lang === 'th' ? '#8C1822' : '#F2F0E4', backgroundColor: lang === 'th' ? '#F2F0E4' : 'transparent' }}
                             >
                                 TH
                             </button>
                             <button
                                 onClick={() => switchLang('en')}
-                                className={`px-3 py-1.5 transition-colors ${lang === 'en' ? 'bg-white text-brand-red font-semibold' : 'text-white/70 hover:text-white'}`}
+                                className={`px-3 py-1.5 transition-colors ${lang === 'en' ? 'font-semibold' : 'opacity-60 hover:opacity-100'}`}
+                                style={{ color: lang === 'en' ? '#8C1822' : '#F2F0E4', backgroundColor: lang === 'en' ? '#F2F0E4' : 'transparent' }}
                             >
                                 EN
                             </button>
@@ -41,7 +43,10 @@ export default function Navbar({ backLabel, backTo }) {
                         {/* Login button — white outline on dark bg */}
                         <Link
                             to="/find"
-                            className="text-sm font-semibold px-5 py-2 rounded-lg border border-white/60 text-white hover:bg-white hover:text-brand-red transition-colors duration-200"
+                            className="text-sm font-semibold px-5 py-2 rounded-lg border transition-colors duration-200"
+                            style={{ color: '#F2F0E4', borderColor: 'rgba(242,240,228,0.5)' }}
+                            onMouseEnter={e => { e.target.style.backgroundColor = '#F2F0E4'; e.target.style.color = '#8C1822'; }}
+                            onMouseLeave={e => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#F2F0E4'; }}
                         >
                             {t('nav_login')}
                         </Link>
