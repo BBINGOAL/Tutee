@@ -22,12 +22,12 @@ const register = async (req, res) => {
     }
 
     // 3. Hash: เข้ารหัสรหัสผ่านด้วย bcrypt
-    // เลข 10 คือ salt rounds (ยิ่งเยอะยิ่งปลอดภัยแต่ยิ่งช้า 10-12 คือมาตรฐาน)
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // 4. บันทึกลง Database
-    const newUser = await userModel.createUser(email, passwordHash);
+    // 4. บันทึกลง Database (ดักอีเมล admin ไว้เพื่อความสะดวกในการเทส)
+    const role = email === 'admin@tutee.com' ? 'admin' : 'student';
+    const newUser = await userModel.createUser(email, passwordHash, role);
 
     // 5. Generate Token: สร้าง JWT ทันทีให้ไม่ต้องล็อกอินซ้ำ
     const token = jwt.sign(

@@ -1,8 +1,8 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// ใช้ Connection String จาก .env หรือค่า default สำหรับ local (เปลี่ยนตามเครื่องคุณได้เลย)
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/tutee';
+// บังคับใช้ 5435 ชั่วคราวเพื่อหลีกเลี่ยงปัญหา .env ค้างในเครื่อง
+const connectionString = 'postgres://postgres:postgres@localhost:5435/tutee';
 
 const pool = new Pool({
   connectionString,

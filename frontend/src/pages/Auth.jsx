@@ -37,8 +37,12 @@ export default function Auth() {
             // ถ้าสำเร็จ ให้บันทึก token ลง AuthContext
             login(data.token, data.user);
             
-            // เปลี่ยนหน้าไปหน้าหลัก
-            navigate('/');
+            // เปลี่ยนหน้า (ถ้าเป็น admin ไปหน้า /admin ถ้าไม่ใช่ไปหน้าแรก)
+            if (data.user.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError(err.message);
         } finally {

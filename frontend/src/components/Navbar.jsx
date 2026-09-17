@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function Navbar({ backLabel, backTo }) {
     const location = useLocation();
     const { lang, switchLang, t } = useLanguage();
-    const { isAuthenticated, logout } = useAuth();
+    const { isAuthenticated, isAdmin, logout } = useAuth();
     const isLanding = location.pathname === '/';
 
     return (
@@ -23,6 +23,13 @@ export default function Navbar({ backLabel, backTo }) {
                         <Link to="/find" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_find')}</Link>
                         <Link to="/chat" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_how')}</Link>
                         <a href="#" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_for_tutor')}</a>
+                        
+                        {/* Admin Link */}
+                        {isAdmin && (
+                            <Link to="/admin" className="hidden md:block text-sm font-bold text-white hover:opacity-80 transition-opacity">
+                                Admin Panel
+                            </Link>
+                        )}
 
                         {/* Language Toggle — inverted for dark bg */}
                         <div className="flex items-center border border-white/30 rounded-full overflow-hidden text-xs font-medium">
