@@ -10,7 +10,7 @@ export default {
             // ===== Custom Colors =====
             colors: {
                 'cream':          '#F2F0E4',  // พื้นหลัก (Off-white warm)
-                'cream-dark':     '#F2A2A2',  // พื้นหลัง section รอง (Blush Pink)
+                'cream-dark':     '#FAE0D2',  // พื้นหลัง section รอง (Soft Peach)
                 'card':           '#FFFFFF',  // การ์ดขาว
                 'border-soft':    '#E5BCBC',  // เส้นขอบ (warm pink-tinted)
                 'brand-red':      '#8C1822',  // Primary accent
