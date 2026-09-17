@@ -1,8 +1,12 @@
 require('dotenv').config(); // โหลดค่าจาก .env
 const express = require('express');
 const cors = require('cors');
+const userModel = require('./src/models/userModel'); // นำเข้า userModel
 
 const app = express();
+
+// Initialize DB Table
+userModel.createUserTable();
 
 // --- Middlewares ---
 // อนุญาต Request จากที่อื่น (สำหรับ React)
@@ -21,6 +25,8 @@ app.use('/api/recommend', recommendRoute);
 const askRoute = require('./src/routes/askRoute');
 app.use('/api/ask', askRoute);
 
+const authRoute = require('./src/routes/authRoute');
+app.use('/api/auth', authRoute);
 
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
