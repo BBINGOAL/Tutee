@@ -7,6 +7,7 @@ import TutorResults from './pages/TutorResults';
 import TuteeChat from './pages/TuteeChat';
 import TutorProfile from './pages/TutorProfile';
 import Auth from './pages/Auth';
+import Admin from './pages/Admin';
 
 export default function App() {
     return (
@@ -20,6 +21,7 @@ export default function App() {
                         <Route path="/chat"       element={<TuteeChat />} />
                         <Route path="/tutor/:id"  element={<TutorProfile />} />
                         <Route path="/auth"       element={<Auth />} />
+                        <Route path="/admin"      element={<Admin />} />
                     </Routes>
                 </BrowserRouter>
             </LanguageProvider>

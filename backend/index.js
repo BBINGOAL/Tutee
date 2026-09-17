@@ -28,6 +28,8 @@ app.use('/api/ask', askRoute);
 const authRoute = require('./src/routes/authRoute');
 app.use('/api/auth', authRoute);
 
+const adminRoute = require('./src/routes/adminRoute');
+app.use('/api/admin', adminRoute);
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
