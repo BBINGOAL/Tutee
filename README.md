@@ -115,8 +115,16 @@ npm run dev
 ```
 *The web application is available at http://localhost:5173*
 
-## Future Development
+## Future Development (Roadmap)
 
-- Configure cloud deployment pipelines (e.g., AWS ECS, Vercel, and Cloud SQL).
-- Setup automated CI/CD for unit testing and AI evaluation.
-- Implement Student Profiles and booking histories.
+While Tutee is initially designed as an internal platform for specialized tutoring institutes (where Admins manage the pool of verified tutors), the long-term vision is to scale into a **Global Open Platform**. 
+
+The upcoming phases of development include:
+
+- **Enhanced Tutor Profiles:** Dedicated profile pages showcasing detailed information, teaching methodologies, and introduction videos.
+- **Tutor Contact & Communication:** Adding direct contact channels on profile pages (e.g., LINE, Phone, Social Media) to facilitate easy reach-out.
+- **Review & Rating System:** Implementing a feedback loop where students can leave reviews, ratings, and testimonials to build tutor credibility.
+- **Tutor Authentication (Global Scaling):** Expanding the platform to allow independent tutors worldwide to sign up, create profiles, and manage their own availability and pricing without Admin intervention.
+- **In-App Messaging & Booking:** Building a real-time chat and appointment booking system (location, time negotiation) directly between students and tutors.
+- **Student Dashboard:** Implementing student profiles to track booking histories, favorite tutors, and learning progress.
+- **Cloud Infrastructure & CI/CD:** Configuring cloud deployment pipelines (e.g., AWS ECS, Vercel, Cloud SQL) and setting up automated testing for AI evaluation.
