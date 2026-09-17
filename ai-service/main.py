@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import recommend, ask
+from routers import recommend, ask, admin
 
 app = FastAPI(
     title="Tutee AI Service",
@@ -19,6 +19,7 @@ app.add_middleware(
 # รวม router เข้ากับ app หลัก
 app.include_router(recommend.router, prefix="/api/v1", tags=["Recommendation"])
 app.include_router(ask.router, prefix="/api/v1", tags=["RAG"])
+app.include_router(admin.router, prefix="/api/v1", tags=["Admin"])
 
 
 @app.get("/health")

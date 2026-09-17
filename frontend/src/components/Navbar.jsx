@@ -1,9 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar({ backLabel, backTo }) {
     const location = useLocation();
     const { lang, switchLang, t } = useLanguage();
+    const { isAuthenticated, isAdmin, logout } = useAuth();
     const isLanding = location.pathname === '/';
 
     return (
@@ -21,6 +23,13 @@ export default function Navbar({ backLabel, backTo }) {
                         <Link to="/find" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_find')}</Link>
                         <Link to="/chat" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_how')}</Link>
                         <a href="#" className="hidden md:block text-sm hover:opacity-100 transition-opacity" style={{ color: '#F2F0E4', opacity: 0.75 }}>{t('nav_for_tutor')}</a>
+                        
+                        {/* Admin Link */}
+                        {isAdmin && (
+                            <Link to="/admin" className="hidden md:block text-sm font-bold text-white hover:opacity-80 transition-opacity">
+                                Admin Panel
+                            </Link>
+                        )}
 
                         {/* Language Toggle — inverted for dark bg */}
                         <div className="flex items-center border border-white/30 rounded-full overflow-hidden text-xs font-medium">
@@ -40,16 +49,28 @@ export default function Navbar({ backLabel, backTo }) {
                             </button>
                         </div>
 
-                        {/* Login button — white outline on dark bg */}
-                        <Link
-                            to="/find"
-                            className="text-sm font-semibold px-5 py-2 rounded-lg border transition-colors duration-200"
-                            style={{ color: '#F2F0E4', borderColor: 'rgba(242,240,228,0.5)' }}
-                            onMouseEnter={e => { e.target.style.backgroundColor = '#F2F0E4'; e.target.style.color = '#8C1822'; }}
-                            onMouseLeave={e => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#F2F0E4'; }}
-                        >
-                            {t('nav_login')}
-                        </Link>
+                        {/* Login / Logout button */}
+                        {isAuthenticated ? (
+                            <button
+                                onClick={logout}
+                                className="text-sm font-semibold px-5 py-2 rounded-lg border transition-colors duration-200"
+                                style={{ color: '#F2F0E4', borderColor: 'rgba(242,240,228,0.5)' }}
+                                onMouseEnter={e => { e.target.style.backgroundColor = '#F2F0E4'; e.target.style.color = '#8C1822'; }}
+                                onMouseLeave={e => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#F2F0E4'; }}
+                            >
+                                Logout
+                            </button>
+                        ) : (
+                            <Link
+                                to="/auth"
+                                className="text-sm font-semibold px-5 py-2 rounded-lg border transition-colors duration-200"
+                                style={{ color: '#F2F0E4', borderColor: 'rgba(242,240,228,0.5)' }}
+                                onMouseEnter={e => { e.target.style.backgroundColor = '#F2F0E4'; e.target.style.color = '#8C1822'; }}
+                                onMouseLeave={e => { e.target.style.backgroundColor = 'transparent'; e.target.style.color = '#F2F0E4'; }}
+                            >
+                                {t('nav_login')}
+                            </Link>
+                        )}
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">

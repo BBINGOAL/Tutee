@@ -1,10 +1,8 @@
 import json
 import math
-from pathlib import Path
 from models import Tutor
 from embedder import embed_text
-
-
+from database import get_db_connection
 def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
     """
     คำนวณ cosine similarity ระหว่าง 2 vectors
@@ -32,25 +30,61 @@ def build_tutor_text(tutor: Tutor) -> str:
 def search_similar_tutors(query_text: str, top_k: int = 3) -> list[dict]:
     """
     ค้นหา tutors ที่มีข้อความใกล้เคียงกับ query มากที่สุด
-    โดยใช้ cosine similarity บน mock data
+    โดยใช้ vector cosine similarity บน PostgreSQL (pgvector)
     """
-    # โหลด tutors
-    data_path = Path(__file__).parent / "mock_tutors.json"
-    with open(data_path, encoding="utf-8") as f:
-        tutors = [Tutor(**t) for t in json.load(f)]
-
     # embed query
     query_vector = embed_text(query_text)
+    vector_str = f"[{','.join(map(str, query_vector))}]"
+    
+    conn = get_db_connection()
+    if not conn:
+        return []
 
-    # คำนวณ similarity กับทุก tutor
     results = []
-    for tutor in tutors:
-        tutor_text = build_tutor_text(tutor)
-        tutor_vector = embed_text(tutor_text)
-        similarity = cosine_similarity(query_vector, tutor_vector)
-        results.append({"tutor": tutor, "similarity": round(similarity, 4)})
+    try:
+        with conn.cursor() as cur:
+            # Query หา vector ที่มีระยะทางน้อยที่สุด (คล้ายมากที่สุด)
+            cur.execute("""
+                SELECT t.*, e.embedding <-> %s::vector AS distance
+                FROM tutor_embeddings e
+                JOIN tutors t ON t.id = e.tutor_id
+                ORDER BY distance ASC
+                LIMIT %s;
+            """, (vector_str, top_k))
+            
+            rows = cur.fetchall()
+            
+            for row in rows:
+                # สร้าง Tutor object จาก dict ที่ได้จาก database
+                tutor_data = {
+                    "id": str(row["id"]), # แปลงกลับเป็น string ให้ตรงกับ model
+                    "name": row["name"],
+                    "subjects": row["subjects"] or [],
+                    "skill_level": row["skill_level"] or "",
+                    "price_per_hour": float(row["price_per_hour"] or 0),
+                    "rating": float(row["rating"] or 0),
+                    "experience_years": row["experience_years"] or 0,
+                    "availability": row["availability"] or [],
+                    "bio": row["bio"] or "",
+                    "teaching_style": row["teaching_style"] or "",
+                    "reviews": row["reviews"] or []
+                }
+                
+                tutor_obj = Tutor(**tutor_data)
+                
+                # similarity ยิ่งค่า distance น้อย (ใกล้ 0) ยิ่งเหมือน
+                # แปลง distance เป็น similarity คร่าวๆ (cosine similarity = 1 - (distance^2)/2) 
+                # แต่ pgvector <-> คือ L2 distance สำหรับ ivfflat หรือ cosine distance ขึ้นอยู่กับ type 
+                # ถ้าใช้ vector_cosine_ops, <-> คือ cosine distance, similarity = 1 - distance
+                similarity = 1.0 - float(row["distance"])
+                
+                results.append({
+                    "tutor": tutor_obj,
+                    "similarity": round(similarity, 4)
+                })
+    except Exception as e:
+        print(f"Vector search error: {e}")
+    finally:
+        conn.close()
 
-    # เรียงจาก similarity มากไปน้อย
-    results.sort(key=lambda x: x["similarity"], reverse=True)
-
-    return results[:top_k]
+    return results
