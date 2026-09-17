@@ -1,0 +1,124 @@
+/* ================================
+   GLOBAL CSS — Tutee Design System
+   ================================ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+
+/* CSS Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Root Variables (จาก theme.js แต่ใช้ใน CSS ได้ด้วย) */
+:root {
+    --page-bg:       #FAF3EA;
+    --card-bg:       #FFFFFF;
+    --accent:        #C0392B;
+    --accent-hover:  #A93226;
+    --accent-light:  #FAE5E3;
+    --text-primary:  #1C1C1C;
+    --text-secondary:#6B6B6B;
+    --text-muted:    #9E9E9E;
+    --border:        #E8DDD0;
+    --font-serif:    'Fraunces', 'Lora', Georgia, serif;
+    --font-sans:     'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--page-bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-family: var(--font-serif);
+    line-height: 1.2;
+    color: var(--text-primary);
+}
+
+p {
+    color: var(--text-secondary);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    font-family: var(--font-sans);
+    border: none;
+    outline: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Card - Shared base style */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+/* Accent Button */
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+/* Outline Button */
+.btn-outline {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: border-color 0.2s, background 0.2s;
+}
+.btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Red underline accent (ใช้กับ AI Match Analysis) */
+.accent-underline {
+    display: inline-block;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 1px;
+}

@@ -1,0 +1,49 @@
+/* ① Import Google Fonts — Ubuntu (Latin/EN) + Kanit (Thai) */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* ② Tailwind Directives — 3 บรรทัดนี้คือหัวใจของ Tailwind */
+@tailwind base;       /* CSS reset พื้นฐาน */
+@tailwind components; /* สำหรับ @layer components ที่เราจะเขียนเอง */
+@tailwind utilities;  /* utility classes ทั้งหมด (bg-*, text-*, p-*, ...) */
+
+/* ③ Global base styles ที่ Tailwind ไม่ครอบคลุม */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply bg-cream text-text-main font-sans;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: 'kern' 1;
+    }
+    h1, h2, h3 {
+        @apply font-serif;
+    }
+}
+
+/* ④ Reusable component classes (เรียกใช้ได้เหมือน Tailwind class) */
+@layer components {
+    .btn-primary {
+        @apply bg-brand-red hover:bg-brand-red-dark text-white
+               px-6 py-3 rounded-lg font-semibold text-sm
+               transition-colors duration-200 inline-flex items-center justify-center gap-2;
+    }
+    .btn-outline {
+        @apply border border-border-soft hover:border-brand-red hover:text-brand-red
+               text-text-main px-5 py-[11px] rounded-lg text-sm font-medium
+               transition-colors duration-200 bg-white;
+    }
+    .card {
+        @apply bg-card border border-border-soft rounded-xl;
+    }
+    .section-eyebrow {
+        @apply text-brand-red text-xs font-semibold tracking-widest uppercase mb-2;
+    }
+    .container-main {
+        @apply max-w-content mx-auto px-6;
+    }
+    /* TutorProfile / TuteeChat header (non-Navbar) */
+    .page-header {
+        @apply bg-brand-red border-b border-brand-red-dark sticky top-0 z-50;
+    }
+}
