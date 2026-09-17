@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tutors (
 -- เหตุผล: vector มีขนาดใหญ่ ไม่ต้องดึงทุกครั้งที่ query tutor
 CREATE TABLE IF NOT EXISTS tutor_embeddings (
     id          SERIAL PRIMARY KEY,
-    tutor_id    TEXT NOT NULL REFERENCES tutors(id) ON DELETE CASCADE,
+    tutor_id    INTEGER NOT NULL REFERENCES tutors(id) ON DELETE CASCADE,
     field_name  TEXT NOT NULL,         -- เช่น "bio", "teaching_style", "reviews"
     embedding   VECTOR(384) NOT NULL,  -- 384 มิติ (paraphrase-multilingual-MiniLM)
     created_at  TIMESTAMP DEFAULT NOW()

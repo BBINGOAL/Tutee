@@ -2,11 +2,13 @@ require('dotenv').config(); // โหลดค่าจาก .env
 const express = require('express');
 const cors = require('cors');
 const userModel = require('./src/models/userModel'); // นำเข้า userModel
+const tutorModel = require('./src/models/tutorModel'); // นำเข้า tutorModel
 
 const app = express();
 
 // Initialize DB Table
 userModel.createUserTable();
+tutorModel.createTutorTable();
 
 // --- Middlewares ---
 // อนุญาต Request จากที่อื่น (สำหรับ React)
