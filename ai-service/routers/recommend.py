@@ -1,18 +1,12 @@
 import json
-from fastapi import APIRouter
-from pathlib import Path
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from models import Tutor, StudentRequirement
 from scorer import rank_tutors
-from explainer import explain_recommendation
+from explainer import explain_recommendation_batch
+from database import get_db_connection
 
 router = APIRouter()
-
-# โหลด mock data ครั้งเดียวตอน server เริ่ม
-DATA_PATH = Path(__file__).parent.parent / "mock_tutors.json"
-
-with open(DATA_PATH, encoding="utf-8") as f:
-    TUTORS = [Tutor(**t) for t in json.load(f)]
 
 
 class ScoreBreakdown(BaseModel):
@@ -46,14 +40,48 @@ def recommend_tutors(requirement: StudentRequirement) -> list[TutorResponse]:
     - คะแนนแยกรายด้าน (score_breakdown)
     - คำอธิบายภาษาคนจาก AI (explanation)
     """
-    results = rank_tutors(requirement, TUTORS)
+    conn = get_db_connection()
+    if not conn:
+        raise HTTPException(status_code=500, detail="Database connection failed")
+        
+    tutors = []
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM tutors;")
+            rows = cur.fetchall()
+            for row in rows:
+                tutor_data = {
+                    "id": str(row["id"]),
+                    "name": row["name"],
+                    "subjects": row["subjects"] or [],
+                    "skill_level": row["skill_level"] or "",
+                    "price_per_hour": float(row["price_per_hour"] or 0),
+                    "rating": float(row["rating"] or 0),
+                    "experience_years": row["experience_years"] or 0,
+                    "availability": row["availability"] or [],
+                    "bio": row["bio"] or "",
+                    "teaching_style": row["teaching_style"] or "",
+                    "reviews": row["reviews"] or []
+                }
+                tutors.append(Tutor(**tutor_data))
+    except Exception as e:
+        print(f"Error fetching tutors for recommendation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+    results = rank_tutors(requirement, tutors)
+
+    # แยกลิสต์ของ tutor เปล่าๆ ออกมาจากผลลัพธ์ของ rank_tutors
+    top_tutors = [r["tutor"] for r in results]
+    
+    # เรียก Batch Pipeline!
+    explanations_data = explain_recommendation_batch(requirement, top_tutors)
 
     response = []
-    for r in results:
+    for i, r in enumerate(results):
         tutor = r["tutor"]
-
-        # เรียก Explainer pipeline (คำนวณ breakdown + สร้างคำอธิบาย)
-        explanation, breakdown = explain_recommendation(requirement, tutor)
+        explanation, breakdown = explanations_data[i]
 
         response.append(
             TutorResponse(

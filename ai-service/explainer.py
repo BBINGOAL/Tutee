@@ -111,20 +111,87 @@ def explain_recommendation(
     prompt = build_explanation_prompt(requirement, tutor, breakdown)
 
     # 3. เรียก Gemini ให้แค่เรียบเรียงภาษา
-    model = genai.GenerativeModel(
-        model_name="gemini-3.6-flash",
-        system_instruction=(
-            "คุณคือผู้ช่วยอธิบายผลการแนะนำของระบบ Tutee "
-            "ห้ามคิดคะแนนใหม่หรือเปลี่ยนแปลงตัวเลขที่ได้รับ "
-            "มีหน้าที่เพียงเรียบเรียงข้อมูลที่ได้รับเป็นภาษาคนที่อ่านง่าย "
-            "ตอบเป็นภาษาไทย กระชับ ไม่เกิน 3 ประโยค"
-        ),
-        generation_config=genai.GenerationConfig(
-            temperature=0.1,       # ต่ำมาก เพราะต้องการ factual ไม่ creative
-            max_output_tokens=1024  # คำอธิบายสั้น ไม่ต้องยาว
+    try:
+        model = genai.GenerativeModel(
+            model_name="gemini-3.6-flash",
+            system_instruction=(
+                "คุณคือผู้ช่วยอธิบายผลการแนะนำของระบบ Tutee "
+                "ห้ามคิดคะแนนใหม่หรือเปลี่ยนแปลงตัวเลขที่ได้รับ "
+                "มีหน้าที่เพียงเรียบเรียงข้อมูลที่ได้รับเป็นภาษาคนที่อ่านง่าย "
+                "ตอบเป็นภาษาไทย กระชับ ไม่เกิน 3 ประโยค"
+            ),
+            generation_config=genai.GenerationConfig(
+                temperature=0.1,
+                max_output_tokens=1024
+            )
         )
+        response = model.generate_content(prompt)
+        explanation = response.text
+    except Exception as e:
+        print(f"Gemini API Error: {e}")
+        explanation = "ระบบวิเคราะห์ความเหมาะสมสำเร็จ (AI กำลังรับภาระหนัก ไม่สามารถสร้างคำอธิบายแบบละเอียดได้ในขณะนี้)"
+
+    return explanation, breakdown
+
+def explain_recommendation_batch(
+    requirement: StudentRequirement,
+    tutors: list[Tutor]
+) -> list[tuple[str, dict]]:
+    """
+    รับ Tutor หลายคน (มักจะเป็น Top 3) แล้วเรียก Gemini ครั้งเดียว
+    ประหยัด API Quota ไป 3 เท่า!
+    """
+    # 1. คำนวณ breakdown ของแต่ละคน
+    breakdowns = [build_score_breakdown(requirement, t) for t in tutors]
+    
+    # 2. สร้าง prompt รวม
+    prompt = (
+        f"นักเรียนต้องการ:\n"
+        f"  - วิชา: {requirement.subject}\n"
+        f"  - ระดับ: {requirement.skill_level}\n"
+        f"  - งบ: {requirement.budget_per_hour} บาท/ชม.\n"
+        f"  - วันที่ว่าง: {', '.join(requirement.available_days)}\n\n"
     )
 
-    response = model.generate_content(prompt)
-    return response.text, breakdown
+    def pct(val: float) -> str: return f"{int(val * 100)}%"
+    
+    for i, (t, b) in enumerate(zip(tutors, breakdowns)):
+        prompt += f"--- ติวเตอร์คนที่ {i+1}: {t.name} ---\n"
+        prompt += f"  - วิชาที่สอน: {', '.join(t.subjects)}\n"
+        prompt += f"  - ระดับ: {t.skill_level}, ราคา: {t.price_per_hour}, ว่าง: {', '.join(t.availability)}\n"
+        prompt += f"คะแนน: วิชา {pct(b['subject_score'])}, ระดับ {pct(b['skill_score'])}, "
+        prompt += f"ราคา {pct(b['price_score'])}, เวลา {pct(b['avail_score'])}, รวม {pct(b['total_score'])}\n\n"
 
+    prompt += (
+        "จากข้อมูลทั้งหมด ขอให้เขียนคำอธิบายภาษาไทยสั้นๆ 2-3 ประโยค ให้กับติวเตอร์แต่ละคน ว่าทำไมถึงแนะนำ\n"
+        "สำคัญมาก: ให้คั่นคำอธิบายของแต่ละคนด้วยคำว่า ||| เท่านั้น ห้ามใส่ข้อความอื่นหรือเว้นบรรทัดที่ไม่จำเป็น\n"
+        "ตัวอย่างผลลัพธ์:\n"
+        "คำอธิบายคนที่1\n|||\nคำอธิบายคนที่2\n|||\nคำอธิบายคนที่3"
+    )
+
+    # 3. เรียก Gemini
+    explanations = []
+    try:
+        model = genai.GenerativeModel(
+            model_name="gemini-3.6-flash",
+            system_instruction="คุณคือผู้ช่วยอธิบายผลแนะนำติวเตอร์ ห้ามเปลี่ยนแปลงตัวเลขคะแนน และต้องใช้สัญลักษณ์ ||| คั่นระหว่างคนเท่านั้น",
+            generation_config=genai.GenerationConfig(temperature=0.1, max_output_tokens=2048)
+        )
+        response = model.generate_content(prompt)
+        # ตัดแบ่งด้วย |||
+        parts = [p.strip() for p in response.text.split("|||")]
+        
+        # ถ้า AI ตอบมาครบจำนวนคน
+        if len(parts) >= len(tutors):
+            explanations = parts[:len(tutors)]
+        else:
+            raise ValueError("AI returned fewer explanations than expected.")
+            
+    except Exception as e:
+        print(f"Gemini Batch API Error: {e}")
+        # Fallback 
+        fallback_msg = "ระบบวิเคราะห์ความเหมาะสมสำเร็จ (AI กำลังรับภาระหนัก ไม่สามารถสร้างคำอธิบายแบบละเอียดได้)"
+        explanations = [fallback_msg] * len(tutors)
+        
+    # คืนค่ากลับไปเป็น List ของ Tuple (explanation, breakdown)
+    return [(explanations[i], breakdowns[i]) for i in range(len(tutors))]
